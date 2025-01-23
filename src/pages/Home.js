@@ -9,6 +9,7 @@ import { Badge } from "react-bootstrap"; // Badge for status display
 import { AuthContext } from "../utility/AuthContext"; // Import AuthProvider
 import { FaCheck, FaTimes } from "react-icons/fa"; // Import React Icons
 import LoadingScreen from "../LoadingScreen";
+import { Container } from "react-bootstrap";
 
 const Home = () => {
   const [categories, setCategories] = useState([]); // State to store category keys
@@ -34,7 +35,7 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const questionsSnapshot = await get(ref(database, "/codemasters"));
+        const questionsSnapshot = await get(ref(database, "/algomitra"));
         const fetchedQuestions = questionsSnapshot.val() || {};
 
         const userId = user?.uid; // Get user ID
@@ -93,8 +94,34 @@ const Home = () => {
   }
 
   return (
-    <div className={`min-vh-100 ${containerClass}`}>
+
+    <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+    {/* Upper Div (fits its content dynamically) */}
+    <div
+      style={{
+        backgroundColor: "#343a40",
+        color: "white",
+        width:'100%',
+      }}
+    >
       <MainNavbar />
+
+    </div>
+
+    {/* Scrollable Lower Div */}
+    <div
+      style={{
+        flex: 1, // Fills the remaining height
+        overflowY: "auto", // Makes it scrollable
+        padding: "20px",
+        backgroundColor: "#f8f9fa",
+      }}
+    >
+      <Container>
+
+
+        
+    <div className={`min-vh-100 ${containerClass}`}>
       <div className="container py-4">
         {categories.length > 0 ? (
           categories.map((category, index) => (
@@ -153,6 +180,14 @@ const Home = () => {
         )}
       </div>
     </div>
+
+        
+        
+      </Container>
+    </div>
+  </div>
+
+  
   );
 };
 

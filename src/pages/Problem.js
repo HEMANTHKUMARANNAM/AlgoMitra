@@ -35,11 +35,11 @@ function Problem() {
         // Single call for both question data and next question URL
         const questionRef = ref(
           database,
-          `codemasters/${decryptedCourse}/${decryptedQuestionId}/`
+          `algomitra/${decryptedCourse}/${decryptedQuestionId}/`
         );
         const allQuestionsRef = ref(
           database,
-          `codemasters/${decryptedCourse}`
+          `algomitra/${decryptedCourse}`
         );
 
         // Get both question data and all questions in parallel

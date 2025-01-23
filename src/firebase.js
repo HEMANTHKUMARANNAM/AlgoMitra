@@ -3,14 +3,14 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDWQnaBKa9ORUzplGd2NfCtHRBlYC-ynsM",
-  authDomain: "codemasters-70ce6.firebaseapp.com",
-  databaseURL: "https://codemasters-70ce6-default-rtdb.firebaseio.com",
-  projectId: "codemasters-70ce6",
-  storageBucket: "codemasters-70ce6.firebasestorage.app",
-  messagingSenderId: "467789670462",
-  appId: "1:467789670462:web:80f56ed3924d004739496f",
-  measurementId: "G-4X0VRNGY52"
+  apiKey: "AIzaSyALbaAvk3WmFB9YMo7O913n4WR8b27vVwA",
+  authDomain: "algomitra.firebaseapp.com",
+  databaseURL: "https://algomitra-default-rtdb.firebaseio.com",
+  projectId: "algomitra",
+  storageBucket: "algomitra.firebasestorage.app",
+  messagingSenderId: "355497275702",
+  appId: "1:355497275702:web:75bf115bb007d881320397",
+  measurementId: "G-3H1WCVY6E1"
 };
 
 // Initialize Firebase app (only if it hasn't been initialized yet)

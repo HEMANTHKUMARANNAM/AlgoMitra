@@ -43,6 +43,7 @@ export const AuthProvider = ({ children }) => {
       const user = result.user; // User information
       setUser(user); // Set authenticated user
       console.log('User signed in:', user);
+      
     } catch (error) {
       console.error('Error during sign in:', error.message);
     }
