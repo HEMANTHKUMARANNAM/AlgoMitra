@@ -22,7 +22,7 @@ const ProblemNavbar = ({ toggleMode, activeMode, setlan, lan , nextQuestionUrl }
   const [progress, setProgress] = useState(0);
 
   // Decrypt URL parameters
-  const decryptedCourse = decryptParam(course);
+  // const decryptedCourse = decryptParam(course);
   const decryptedQuestionId = decryptParam(questionId);
 
   // Set status icon state

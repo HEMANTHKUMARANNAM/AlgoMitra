@@ -4,7 +4,7 @@ import { FaSun, FaMoon, FaUser } from "react-icons/fa"; // Import icons
 import { AuthContext } from "../utility/AuthContext";
 import { Image } from "react-bootstrap"; // Import Bootstrap Image component
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
-import { Navbar, Nav, ProgressBar, Button, Dropdown, Container, Badge } from "react-bootstrap";
+import {  ProgressBar} from "react-bootstrap";
 import { useQuestions } from '../utility/QuestionProvider';  // Import the custom hook
 import { name } from "../constants";
 import icon from '../assets/icon.png';

@@ -21,7 +21,7 @@ export const ScreenSizeProvider = ({ children }) => {
 
   return (
     <ScreenSizeContext.Provider value={{ screenWidth }}>
-      {screenWidth < 68 ? (
+      {screenWidth < 968 ? (
         <div style={styles.messageContainer}>
           <p style={styles.messageText}>AlgoMitra cannot be displayed on small screens.</p>
         </div>
