@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate for naviga
 import { Navbar, Nav, ProgressBar, Button, Dropdown, Container, Badge } from "react-bootstrap";
 import { useQuestions } from '../utility/QuestionProvider';  // Import the custom hook
 import { name } from "../constants";
+import icon from '../assets/icon.png';
 
 const MainNavbar = () => {
   const { theme, toggleTheme } = useTheme(); // Access theme and toggleTheme from ThemeContext
@@ -59,6 +60,7 @@ const MainNavbar = () => {
   return (
     <nav className={`navbar navbar-expand-lg ${navbarBgClass} ${navbarTextClass}`}>
       <div className="container-fluid">
+        <img src= {icon} />
         {/* Brand Name */}
         <a className="navbar-brand" style={ { color: theme === "light" ? "rgb(29, 30, 35)" :  "#f8f9fa" } } >
           {name}
