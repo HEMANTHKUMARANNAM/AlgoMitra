@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 import { ref, set, get, child } from "firebase/database";
 import { database } from "../firebase"; // Firebase configuration
 import { AuthContext } from '../utility/AuthContext'; // Import AuthProvider
-
+import * as monaco from "monaco-editor";
 const CodeEditor = ({ lan, data }) => {
   const editorRef = useRef();
   const [value, setValue] = useState("");
@@ -97,15 +97,33 @@ const CodeEditor = ({ lan, data }) => {
           language={language}
           defaultValue={CODE_SNIPPETS[language]}
           theme={editorTheme} // Use dynamic theme
-          onMount={onMount}
+          // onMount={onMount}
+          onMount={(editor) => {
+            // Disable copy and paste commands
+            editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyC, () => {
+              console.log("Copy disabled");
+            });
+        
+            editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV, () => {
+              console.log("Paste disabled");
+            });
+        
+            // Disable right-click menu (optional, for additional protection)
+            // editor.onContextMenu((e) => e.preventDefault());
+
+
+          }}
           value={value}
           options={{
             scrollBeyondLastLine: false, // Disable extra space below
             minimap: { enabled: false },
             padding: { top: 10, bottom: 10 }, // Add padding
             lineNumbers: "on", // Show line numbers
+            contextmenu: false, // Disable context menu globally
+
           }}
           onChange={handleCodeChange}
+          
         />
 
         <br></br>
