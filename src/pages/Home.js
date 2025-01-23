@@ -2,34 +2,29 @@ import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { database } from "../firebase";
 import { ref, get } from "firebase/database";
-import { encryptParam } from "../cryptoUtils"; // Import encryption utility
+import { encryptParam } from "../cryptoUtils";
 import MainNavbar from "./MainNavbar";
-import { useTheme } from "../ThemeContext"; // Import Theme Context
-import { Badge } from "react-bootstrap"; // Badge for status display
-import { AuthContext } from "../utility/AuthContext"; // Import AuthProvider
-import { FaCheck, FaTimes } from "react-icons/fa"; // Import React Icons
+import { useTheme } from "../ThemeContext";
+import { Badge, Container } from "react-bootstrap";
+import { AuthContext } from "../utility/AuthContext";
+import { FaCheck, FaTimes } from "react-icons/fa";
 import LoadingScreen from "../LoadingScreen";
-import { Container } from "react-bootstrap";
 
 const Home = () => {
-  const [categories, setCategories] = useState([]); // State to store category keys
-  const [data, setData] = useState({}); // State to store the merged data
-  const [loadingc, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
-  const [userLoading, setUserLoading] = useState(true); // User loading state
-  // const { theme } = useTheme(); // Access the current theme
-  const { user } = useContext(AuthContext); // User from AuthContext
-
-
-  const theme = "light";
+  const [categories, setCategories] = useState([]);
+  const [data, setData] = useState({});
+  const [loadingc, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [userLoading, setUserLoading] = useState(true);
+  const { theme } = useTheme();
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     if (user === undefined) {
-      setUserLoading(true); // If user is undefined, set loading to true
+      setUserLoading(true);
       return;
     }
-
-    setUserLoading(false); // User has been loaded
+    setUserLoading(false);
   }, [user]);
 
   useEffect(() => {
@@ -37,8 +32,7 @@ const Home = () => {
       try {
         const questionsSnapshot = await get(ref(database, "/algomitra"));
         const fetchedQuestions = questionsSnapshot.val() || {};
-
-        const userId = user?.uid; // Get user ID
+        const userId = user?.uid;
         let fetchedStatuses = {};
 
         if (user) {
@@ -46,7 +40,6 @@ const Home = () => {
           fetchedStatuses = statusesSnapshot.val() || {};
         }
 
-        // Merge statuses into question data
         const mergedData = { ...fetchedQuestions };
         for (const category in fetchedQuestions) {
           if (fetchedQuestions[category]) {
@@ -54,8 +47,8 @@ const Home = () => {
               if (fetchedQuestions[category][questionId]) {
                 mergedData[category][questionId].status =
                   fetchedStatuses[questionId] !== null &&
-                  (fetchedStatuses[questionId] === true ||
-                    fetchedStatuses[questionId] === false)
+                    (fetchedStatuses[questionId] === true ||
+                      fetchedStatuses[questionId] === false)
                     ? fetchedStatuses[questionId]
                     : "unknown";
               }
@@ -76,119 +69,108 @@ const Home = () => {
     fetchData();
   }, [user]);
 
-  const containerClass =
-    theme === "light" ? "bg-light text-dark" : "bg-dark text-light";
-  const cardClass = theme === "light" ? "bg-light text-dark" : "bg-dark text-light";
+
+  const cardStyle = {
+    backgroundColor: theme === "light" ? "#f8f9fa" : "rgb(29, 30, 35)", // Apply light or dark background color
+    color: theme === "light" ? "#000" : "#fff", // Apply light or dark text color
+
+  };
   const buttonClass = theme === "light" ? "btn-primary" : "btn-outline-light";
 
-  if (userLoading) {
-    return <LoadingScreen/>;
-  }
-
-  if (loadingc) {
-    return <LoadingScreen/>;
-  }
-
-  if (error) {
-    return <LoadingScreen/>;
+  if (userLoading || loadingc || error) {
+    return <LoadingScreen />;
   }
 
   return (
-
     <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-    {/* Upper Div (fits its content dynamically) */}
-    <div
-      style={{
-        backgroundColor: "#343a40",
-        color: "white",
-        width:'100%',
-      }}
-    >
-      <MainNavbar />
+      {/* Upper Div (fits its content dynamically) */}
+      <div style={{ backgroundColor: "#343a40", color: "white", width: "100%" }}>
+        <MainNavbar />
+      </div>
 
-    </div>
+      {/* Scrollable Lower Div */}
+      <div style={{
+        flex: 1,
+        overflowY: "auto",
+        width: "100%",
+        backgroundColor: theme === "light" ? "#f8f9fa" : "rgb(29, 30, 35)", // Apply light or dark background color
+      }}>
+        <Container
+          style={{
+            flex: 1,
+            overflowY: "auto",
+            width: "100%",
+          }}
+        >
+          {/* <div className="container" > */}
+          {categories.length > 0 ? (
+            categories.map((category, index) => (
+              <div className="mb-4" key={category}>
+                <h5 className="text-capitalize mb-3"
+                  style={cardStyle}
+                >
+                  {index + 1}. {category}
+                </h5>
+                <ul className="list-group">
+                  {Object.keys(data[category] || {}).map((key, questionIndex) => {
+                    const encryptedCourse = encryptParam(category);
+                    const encryptedQuestionId = encryptParam(key);
+                    const problemData = data[category][key] || {};
+                    const questionName = problemData.questionname || "Unnamed Question";
+                    const status = problemData.status;
 
-    {/* Scrollable Lower Div */}
-    <div
-      style={{
-        flex: 1, // Fills the remaining height
-        overflowY: "auto", // Makes it scrollable
-        padding: "20px",
-        backgroundColor: "#f8f9fa",
-      }}
-    >
-      <Container>
+                    // Determine badge color and text based on status
+                    let statusBadge = "secondary";
+                    if (status === true) statusBadge = "success";
+                    else if (status === false) statusBadge = "warning";
 
+                    return (
+                      <li
+                        className={`list-group-item d-flex justify-content-between align-items-center `}
+                        key={key}
+                        // style={cardStyle}
 
-        
-    <div className={`min-vh-100 ${containerClass}`}>
-      <div className="container py-4">
-        {categories.length > 0 ? (
-          categories.map((category, index) => (
-            <div className="mb-4" key={category}>
-              <h5 className="text-capitalize mb-3">
-                {index + 1}. {category}
-              </h5>
-              <ul className="list-group">
-                {Object.keys(data[category] || {}).map((key, questionIndex) => {
-                  const encryptedCourse = encryptParam(category);
-                  const encryptedQuestionId = encryptParam(key);
-
-                  const problemData = data[category][key] || {};
-                  const questionName =
-                    problemData.questionname || "Unnamed Question";
-                  const status = problemData.status;
-
-                  // Determine badge color and text based on status
-                  let statusBadge = "secondary"; // Default color
-                  if (status === true) statusBadge = "success";
-                  else if (status === false) statusBadge = "warning";
-
-                  return (
-                    <li
-                      className={`list-group-item d-flex justify-content-between align-items-center ${cardClass}`}
-                      key={key}
-                    >
-                      <div className="d-flex align-items-center flex-grow-1">
-                        <span className="me-2">
-                          {index + 1}.{questionIndex + 1} {questionName}
-                        </span>
-                        {user && (
-                          <Badge pill bg={statusBadge} className="me-2">
-                            {status === true ? (
-                              <FaCheck /> // Check icon for completed status
-                            ) : status === false ? (
-                              <FaTimes /> // Cross icon for failed status
-                            ) : null}
-                          </Badge>
-                        )}
-                      </div>
-                      <Link
-                        to={`/prob/${encryptedCourse}/${encryptedQuestionId}`}
-                        className={`btn btn-sm ${buttonClass}`}
+                        style={{
+                          ...cardStyle,
+                          borderColor: theme === 'light' ? "#f8f9fa" : theme=== 'dark' ? "rgb(29, 30, 35)" : 'gray', // Customize as needed
+                          borderWidth: '1px',
+                          borderStyle: 'solid'
+                        }}
+                        
                       >
-                        View Problem
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))
-        ) : (
-          <div className="text-center">No categories available.</div>
-        )}
+                        <div className="d-flex align-items-center flex-grow-1">
+                          <span className="me-2" style={{ flex: 1 }}>
+                            {index + 1}.{questionIndex + 1} {questionName}
+                          </span>
+                          {user && (
+                            <Badge pill bg={statusBadge} className="me-2">
+                              {status === true ? (
+                                <FaCheck />
+                              ) : status === false ? (
+                                <FaTimes />
+                              ) : null}
+                            </Badge>
+                          )}
+                        </div>
+                        <Link
+                          to={`/prob/${encryptedCourse}/${encryptedQuestionId}`}
+                          className={`btn btn-sm ${buttonClass}`}
+                        >
+                          View Problem
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))
+          ) : (
+            <div className="text-center">No categories available.</div>
+          )}
+        </Container>
       </div>
     </div>
-
-        
-        
-      </Container>
-    </div>
-  </div>
-
-  
   );
 };
 
-export default Home; 
+export default Home;

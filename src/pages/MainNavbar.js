@@ -9,7 +9,7 @@ import { useQuestions } from '../utility/QuestionProvider';  // Import the custo
 import { name } from "../constants";
 
 const MainNavbar = () => {
-  // const { theme, toggleTheme } = useTheme(); // Access theme and toggleTheme from ThemeContext
+  const { theme, toggleTheme } = useTheme(); // Access theme and toggleTheme from ThemeContext
   const { user } = useContext(AuthContext); // Access user from AuthContext
   const [photoURL, setPhotoURL] = useState(null);
   const navigate = useNavigate(); // Initialize useNavigate for routing
@@ -33,7 +33,6 @@ const MainNavbar = () => {
     if (progress < 70) return "warning";
     return "success";
   };
-  const theme = "light";
 
   // Set photoURL when user is authenticated
   useEffect(() => {
@@ -61,7 +60,7 @@ const MainNavbar = () => {
     <nav className={`navbar navbar-expand-lg ${navbarBgClass} ${navbarTextClass}`}>
       <div className="container-fluid">
         {/* Brand Name */}
-        <a className="navbar-brand">
+        <a className="navbar-brand" style={ { color: theme === "light" ? "rgb(29, 30, 35)" :  "#f8f9fa" } } >
           {name}
         </a>
 
@@ -125,8 +124,8 @@ const MainNavbar = () => {
 
 
             
-{/* 
-            Theme Toggle Button
+ 
+            {/* Theme Toggle Button */}
             <li className="nav-item">
               <button
                 className={`btn ${theme === "light" ? "btn-dark" : "btn-light"}`}
@@ -135,7 +134,7 @@ const MainNavbar = () => {
               >
                 {themeIcon}
               </button>
-            </li> */}
+            </li> 
           </ul>
         </div>
       </div>
