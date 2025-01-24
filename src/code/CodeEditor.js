@@ -18,11 +18,10 @@ const CodeEditor = ({ lan, data }) => {
   const [language, setLanguage] = useState(lan); // Set language from props initially
   const { theme } = useTheme(); // Access the theme from ThemeContext
   const saveTimeoutRef = useRef(null); // Reference to track the debounce timer
-  const { course, questionId } = useParams();
+  const {  questionId } = useParams();
   const { user } = useContext(AuthContext);  // Get the current user from AuthContext
 
   // Decrypt URL parameters
-  const decryptedCourse = decryptParam(course);
   const decryptedQuestionId = decryptParam(questionId);
 
   // Map theme context to Monaco editor themes
