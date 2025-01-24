@@ -13,14 +13,15 @@ import LoadingScreen from "../LoadingScreen";
 import algorithms from "../assets/algorithms.png";
 import problems from "../assets/problems.png";
 import others from "../assets/others.png";
+import { useQuestions } from '../utility/QuestionProvider';  // Import the custom hook
 
 const Home = () => {
   const [categories, setCategories] = useState([]);
-  const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { theme } = useTheme();
-  const { user } = useContext(AuthContext);
+    const {courseProgress} = useQuestions();
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,7 +29,6 @@ const Home = () => {
         const questionsSnapshot = await get(ref(database, "/algomitra"));
         const fetchedQuestions = questionsSnapshot.val() || {};
         setCategories(Object.keys(fetchedQuestions));
-        setData(fetchedQuestions);
       } catch (error) {
         console.error("Error fetching data:", error);
         setError("Failed to load data.");
@@ -55,21 +55,13 @@ const Home = () => {
   const categoryImages = {
     problems : problems,
     algorithms: algorithms,
-    dataStructures: "https://via.placeholder.com/300x200?text=Data+Structures",
-    mathematics: "https://via.placeholder.com/300x200?text=Mathematics",
+
   };
 
-  // CSS for fixed image size
-  const imageStyle = {
-    // width: "100%", // Fixed width
-    // height: "200px", // Fixed height
-    // objectFit: "cover", // Maintain aspect ratio and crop if necessary
-    // margin: "0 auto", // Center image inside the card
-  };
+
 
   return (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-      {/* Navbar */}
       <div style={{ backgroundColor: "#343a40", color: "white", width: "100%" }}>
         <MainNavbar />
       </div>
@@ -93,13 +85,26 @@ const Home = () => {
                 return (
                   <div className="col-md-4 mb-4 d-flex justify-content-center" key={category}>
                     <Card style={{ ...cardStyle, width: "320px" }}> {/* Set consistent card width */}
-                      <Card.Img variant="top" src={imageUrl} alt={category} style={imageStyle} />
+                      <Card.Img variant="top" src={imageUrl} alt={category}  />
                       <Card.Body>
                         <Card.Title className="text-capitalize">
                           {index + 1}. {category}
                         </Card.Title>
                         <Card.Text>
                           Explore problems in the <strong>{category}</strong> category.
+                                   <div 
+                            className="progress-container" 
+                            style={{ ...cardStyle, display: 'flex', alignItems: 'center', gap: '10px', padding: '10px' }}
+                          >
+                            <progress
+                              value={courseProgress[category]?.percentage || 0}
+                              max="100"
+                              style={{ flex: '1', height: '20px' }}
+                            ></progress>
+                            <span style={{ fontSize: '1rem', whiteSpace: 'nowrap' }}>
+                              {`${courseProgress[category]?.completed || 0} / ${courseProgress[category]?.total || 0}`}
+                            </span>
+                          </div>
                         </Card.Text>
                         <Link to={`/category/${encryptedCategory}`}>
                           <Button className={buttonClass}>View Category</Button>

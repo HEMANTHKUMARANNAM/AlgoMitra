@@ -1,32 +1,25 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Navbar, Nav, Container, Image, Button } from "react-bootstrap";
+import { Container, Image, Button } from "react-bootstrap";
 import { FaSignInAlt, FaUser } from "react-icons/fa"; // Default icon
 import { AuthContext } from "../utility/AuthContext";
-import { useNavigate } from "react-router-dom";
 import LoadingScreen from "../LoadingScreen";
 import { useQuestions } from '../utility/QuestionProvider';  // Import the custom hook
-import { name } from "../constants";
 
-import sigin from '../assets/sigin.jpg';  // Make sure this path is correct
+import sigin from '../assets/rb_936.png';  // Make sure this path is correct
 import MainNavbar from "../pages/MainNavbar";
+
+import { useTheme } from "../ThemeContext";
 
 const AppNavbar = () => {
   const { user, signInWithGoogle, logOut, isLoading } = useContext(AuthContext);
   const [photoURL, setPhotoURL] = useState(null);
-  const navigate = useNavigate(); // Hook for navigation
 
-  const [progress, setProgress] = useState(0);
 
-  const { totalQuestions } = useQuestions(); // Get totalQuestions from the custom hook
+  const { theme } = useTheme();
+ 
+  const { overallProgress  } = useQuestions(); // Get totalQuestions from the custom hook
 
-  // Watch for progress changes (total questions)
-  useEffect(() => {
-    if (totalQuestions !== undefined) {
-      const updatedProgress = totalQuestions * 100; // Convert to percentage
-      setProgress(updatedProgress);
-    }
-  }, [totalQuestions]);
-
+  
   // Set photoURL after user is authenticated
   useEffect(() => {
     if (user) {
@@ -39,87 +32,98 @@ const AppNavbar = () => {
     setPhotoURL(null); // Fallback to default icon when the image fails to load
   };
 
+  // Custom RGB values for light and dark themes
+  const themeStyles = {
+    light: {
+      backgroundColor: "rgb(255, 255, 255)", // Light theme background
+      textColor: "rgb(0, 0, 0)", // Dark text for light theme
+      buttonColor: "rgb(0, 123, 255)", // Primary button color in light theme
+    },
+    dark: {
+      backgroundColor: "rgb(29, 30, 35)", // Dark theme background
+      textColor: "rgb(255, 255, 255)", // Light text for dark theme
+      buttonColor: "rgb(52, 58, 64)", // Dark button color for dark theme
+    }
+  };
+
+  const currentTheme = themeStyles[theme];
+
   return (
     <>
+    <div className="container-fluid d-flex flex-column" style={{ height: '100vh', width: '100%', margin: 0, padding: 0 , backgroundColor: currentTheme.backgroundColor }}>
 
-<div className="container-fluid d-flex flex-column" style={{ height: '100vh'  , width : '100%' }}>
-      {/* Upper div */}
-      <div className="bg text-white p-4">
-      <MainNavbar/>
-      </div>
-      
-      {/* Lower div */}
-      <div className="bg text-white flex-grow-1 p-4">
-      <div className="container-fluid p-0" style={{ height: '100%' }}>
-        <div className="row m-0" style={{ height: '100%' }}>
-          {/* Left side with image */}
-          <div
-            className="col-md-6 p-0"
-            style={{
-              backgroundImage: `url(${sigin})`,  // Correct background image syntax
-              backgroundSize: 'cover',  // Make the image cover the div
-              backgroundPosition: 'center', // Center the image
-              height: '100', // Ensure the height takes up the full viewport
-            }}
-          >
-    
-          </div>
+        {/* Upper div */}
+        <div style={{ backgroundColor: currentTheme.backgroundColor ,  margin: 0, padding: 0 }}>
+          <MainNavbar />
+        </div>
 
-          {/* Right side */}
-          <div className="col-md-6 p-0" style={{ backgroundColor: '#e9ecef', height: '100%' }}>
-            {/* Main Content for User Authentication */}
-            <Container
-  className="d-flex flex-column justify-content-center align-items-center mt-4 text-center"
-  style={{ height: '100%' }} // Full viewport height for vertical centering
->
-  {isLoading ? (
-    <LoadingScreen />
-  ) : user ? (
-    <div className="user-info">
-      <div className="profile-section mb-4">
-        {photoURL ? (
-          <Image
-            src={photoURL}
-            alt="Profile"
-            roundedCircle
-            width={120}
-            height={120}
-            className="mb-3 border border-secondary"
-            onError={handleImageError} // Fallback if image load fails
-          />
-        ) : (
-          <FaUser size={120} className="mb-3 text-secondary" /> // Default icon if photoURL is not available
-        )}
-        <h3 className="mt-2 text-dark">{user.displayName || "User"}</h3>
-        <p className="text-muted">
-          Problems Solved: <strong>{progress}%</strong>
-        </p>
-        {/* Example percentage */}
-      </div>
-      <Button variant="outline-dark" onClick={logOut}>
-        Log Out
-      </Button>
-    </div>
-  ) : (
-    <div>
-      <h2 className="text-dark">Please Sign In to Continue</h2>
-      <Button variant="outline-dark" onClick={signInWithGoogle}>
-        <FaSignInAlt /> Sign In with Google
-      </Button>
-    </div>
-  )}
-</Container>
+        {/* Lower div */}
+        <div className="flex-grow-1 p-4" style={{ backgroundColor: currentTheme.backgroundColor }}>
+          <div className="container-fluid p-0" style={{ height: '100%' }}>
+            <div className="row m-0" style={{ height: '100%' }}>
+              {/* Left side with image */}
+              <div
+                className="col-md-6 p-0"
+                style={{
+                  backgroundImage: `url(${sigin })`,  // Correct background image syntax
+                  backgroundSize: 'cover',  // Make the image cover the div
+                  backgroundPosition: 'center', // Center the image
+                  height: '100%', // Ensure the height takes up the full viewport
+                }}
+              >
+              </div>
 
+              {/* Right side */}
+              <div className="col-md-6 p-0" style={{ backgroundColor: currentTheme.backgroundColor, height: '100%' }}>
+                {/* Main Content for User Authentication */}
+                <Container
+                  className="d-flex flex-column justify-content-center align-items-center mt-4 text-center"
+                  style={{ height: '100%' }} // Full viewport height for vertical centering
+                >
+                  {isLoading ? (
+                    <LoadingScreen />
+                  ) : user ? (
+                    <div className="user-info">
+                      <div className="profile-section mb-4">
+                        {photoURL ? (
+                          <Image
+                            src={photoURL}
+                            alt="Profile"
+                            roundedCircle
+                            width={120}
+                            height={120}
+                            className="mb-3 border border-secondary"
+                            onError={handleImageError} // Fallback if image load fails
+                          />
+                        ) : (
+                          <FaUser size={120} className="mb-3 text-secondary" /> // Default icon if photoURL is not available
+                        )}
+                        <h3 className="mt-2" style={{ color: currentTheme.textColor }}>
+                          {user.displayName || "User"}
+                        </h3>
+                        <p  style={{ color: currentTheme.textColor }}>
+  {`Problems Solved: ${Math.round(overallProgress)}%`}
+</p>
+
+                      </div>
+                      <Button variant="outline-dark" onClick={logOut} style={{ backgroundColor: currentTheme.buttonColor , color: currentTheme.textColor }}>
+                        Log Out
+                      </Button>
+                    </div>
+                  ) : (
+                    <div>
+                      <h2 style={{ color : currentTheme.textColor} }>Please Sign In to Continue</h2>
+                      <Button variant="outline-dark" onClick={signInWithGoogle} style={{ backgroundColor: currentTheme.buttonColor , color: currentTheme.textColor }}>
+                        <FaSignInAlt /> Sign In with Google
+                      </Button>
+                    </div>
+                  )}
+                </Container>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      </div>
-    </div>
-
-
-     
-
-     
     </>
   );
 };

@@ -1,39 +1,27 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useTheme } from "../ThemeContext"; // Import Theme Context
-import { FaSun, FaMoon, FaUser } from "react-icons/fa"; // Import icons
 import { AuthContext } from "../utility/AuthContext";
 import { Image } from "react-bootstrap"; // Import Bootstrap Image component
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate for navigation
-import {  ProgressBar} from "react-bootstrap";
 import { useQuestions } from '../utility/QuestionProvider';  // Import the custom hook
 import { name } from "../constants";
 import icon from '../assets/icon.png';
+
+import accounticonlight from "../assets/accountlight.png";
+import accounticondark from "../assets/accountdark.png";
+
+import lightmode from "../assets/lightmode.png";
+import darkmode from "../assets/darkmode.png";
+
 
 const MainNavbar = () => {
   const { theme, toggleTheme } = useTheme(); // Access theme and toggleTheme from ThemeContext
   const { user } = useContext(AuthContext); // Access user from AuthContext
   const [photoURL, setPhotoURL] = useState(null);
   const navigate = useNavigate(); // Initialize useNavigate for routing
-  const [progress, setProgress] = useState(0);
 
-  const { totalQuestions} = useQuestions(); // Get totalQuestions from the custom hook
+  const { overallProgress} = useQuestions(); // Get totalQuestions from the custom hook
 
-  // Watch for progress changes (total questions)
-  useEffect(() => {
-    if (totalQuestions !== undefined) {
-      const updatedProgress = totalQuestions * 100; // Convert to percentage
-      setProgress(updatedProgress);
-    }
-  }, [totalQuestions]);
-
-
-
-   // Determine progress bar color based on progress value
-   const getProgressBarColor = (progress) => {
-    if (progress < 30) return "danger";
-    if (progress < 70) return "warning";
-    return "success";
-  };
 
   // Set photoURL when user is authenticated
   useEffect(() => {
@@ -55,7 +43,6 @@ const MainNavbar = () => {
   // Dynamic classes based on theme
   const navbarBgClass = theme === "light" ? "bg-light" : "bg-dark";
   const navbarTextClass = theme === "light" ? "text-dark" : "text-light";
-  const themeIcon = theme === "light" ? <FaMoon /> : <FaSun />; // Icon for theme toggle
 
   return (
     <nav className={`navbar navbar-expand-lg ${navbarBgClass} ${navbarTextClass}`}>
@@ -89,16 +76,8 @@ const MainNavbar = () => {
 
             {/* Progress Bar */}
           <div className="ms-3 d-flex align-items-center">
-            <span className={theme === "light" ? "text-dark me-2" : "text-light me-2"}>
-              Progress
-            </span>
-            <ProgressBar
-              now={progress}
-              label={`${progress.toFixed(2)}%`}
-              variant={getProgressBarColor(progress)}
-              style={{ width: "150px", height: "20px", borderRadius: "10px" }}
-              className="my-auto"
-            />
+          
+          {overallProgress !== 0 && <progress value={overallProgress/100} />}
           </div>
           <div>
 
@@ -121,7 +100,16 @@ const MainNavbar = () => {
                   onError={handleImageError} // Handle fallback on image load error
                 />
               ) : (
-                <FaUser size={30} className="me-2" />
+                // <FaUser size={30} className="me-2" />
+                <Image
+                  src={theme === 'light' ? accounticondark : accounticonlight}
+                  alt="Profile"
+                  roundedCircle
+                  width={30}
+                  height={30}
+                  className="me-2"
+                  onError={handleImageError} // Handle fallback on image load error
+                />
               )}
               <span>{user ? user.displayName || "User" : "Login"}</span>
             </li>
@@ -131,13 +119,17 @@ const MainNavbar = () => {
  
             {/* Theme Toggle Button */}
             <li className="nav-item">
-              <button
-                className={`btn ${theme === "light" ? "btn-dark" : "btn-light"}`}
-                onClick={toggleTheme}
-                aria-label="Toggle theme"
-              >
-                {themeIcon}
-              </button>
+            
+                <Image
+                  src={theme === 'light' ? darkmode : lightmode}
+                  alt="Profile"
+                  roundedCircle
+                  width={30}
+                  height={30}
+                  className="me-2"
+                  onError={handleImageError} // Handle fallback on image load error
+                  onClick={toggleTheme}
+                />
             </li> 
           </ul>
         </div>

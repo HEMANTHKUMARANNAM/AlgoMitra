@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { database } from "../firebase";
 import { ref, get } from "firebase/database";
 import { decryptParam, encryptParam } from "../cryptoUtils";
@@ -11,7 +11,8 @@ import { FaCheck, FaTimes } from "react-icons/fa";
 import LoadingScreen from "../LoadingScreen";
 import myGiflight from '../assets/Data points - light.gif'; // If the GIF is in your src folder
 import myGifdark from '../assets/Data points.gif'; // If the GIF is in your src folder
-
+import { ToastContainer , toast} from "react-toastify";
+import { useQuestions } from '../utility/QuestionProvider';  // Import the custom hook
 
 const CategoryPage = () => {
   const { categoryId } = useParams();
@@ -22,15 +23,38 @@ const CategoryPage = () => {
   const { theme } = useTheme();
   const { user } = useContext(AuthContext);
 
+  const {courseProgress} = useQuestions();
+
+  const navigate = useNavigate();
+
+  const handleNavigate = (encryptedQuestionId) => {
+    if(!user)
+    {
+      toast.error("Sigin Required...!");
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1500); // Delay navigation to show toast
+    }
+    else
+    {
+      navigate(`/prob/${categoryId}/${encryptedQuestionId}`);
+    }
+
+   
+  };
+
   useEffect(() => {
     const fetchQuestionsAndStatuses = async () => {
       try {
-        if (!user) return; // Wait for user context to load
-        const userId = user.uid;
+        let fetchedStatuses = {};
 
-        // Fetch statuses
-        const statusesSnapshot = await get(ref(database, `/results/${userId}`));
-        const fetchedStatuses = statusesSnapshot.val() || {};
+        if (user) {
+          const userId = user.uid;
+
+          // Fetch statuses
+          const statusesSnapshot = await get(ref(database, `/results/${userId}`));
+          fetchedStatuses = statusesSnapshot.val() || {};
+        }
 
         // Fetch questions
         const categoryName = decryptParam(categoryId);
@@ -58,7 +82,7 @@ const CategoryPage = () => {
 
   const badgeColors = {
     true: "success",
-    false: "warning",
+    false: "danger",
     unknown: "secondary",
   };
 
@@ -67,10 +91,12 @@ const CategoryPage = () => {
 
   return (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+      <ToastContainer/>
       {/* Navbar */}
       <div style={{ backgroundColor: "#343a40", color: "white", width: "100%" }}>
         <MainNavbar />
       </div>
+
 
       {/* Page Content */}
       <div
@@ -87,11 +113,29 @@ const CategoryPage = () => {
             <h3 className="mb-4" style={cardStyle}>
               Questions in {decryptParam(categoryId)}
             </h3>
+
+            <div 
+  className="progress-container" 
+  style={{ ...cardStyle, display: 'flex', alignItems: 'center', gap: '10px', padding: '10px' }}
+>
+  <progress
+    value={courseProgress[decryptParam(categoryId)]?.percentage || 0}
+    max="100"
+    style={{ flex: '1', height: '20px' }}
+  ></progress>
+  <span style={{ fontSize: '1rem', whiteSpace: 'nowrap' }}>
+    {`${courseProgress[decryptParam(categoryId)]?.completed || 0} / ${courseProgress[decryptParam(categoryId)]?.total || 0}`}
+  </span>
+</div>
+           
+
             <ListGroup>
               {questions.map(([id, question]) => {
                 const encryptedQuestionId = encryptParam(id);
                 const questionStatus = statuses[id];
-                const statusBadge = badgeColors[questionStatus === true ? "true" : questionStatus === false ? "false" : "unknown"];
+                const statusBadge = badgeColors[
+                  questionStatus === true ? "true" : questionStatus === false ? "false" : "unknown"
+                ];
 
                 return (
                   <ListGroup.Item
@@ -112,11 +156,9 @@ const CategoryPage = () => {
                         </Badge>
                       )}
                     </div>
-                    <Link to={`/prob/${categoryId}/${encryptedQuestionId}`}>
-                      <Button variant={theme === "light" ? "primary" : "outline-light"} size="sm">
+                      <Button onClick={() =>handleNavigate(encryptedQuestionId)} variant={theme === "light" ? "primary" : "outline-light"} size="sm">
                         View Question
                       </Button>
-                    </Link>
                   </ListGroup.Item>
                 );
               })}
@@ -126,7 +168,11 @@ const CategoryPage = () => {
 
         {/* Right Half: Animation GIF */}
         <div style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <img src={theme === 'light' ? myGiflight : myGifdark} alt="Always animating GIF" style={{ width: '80%', height: 'auto' }} />
+          <img
+            src={theme === "light" ? myGiflight : myGifdark}
+            alt="Always animating GIF"
+            style={{ width: "80%", height: "auto" }}
+          />
         </div>
       </div>
     </div>

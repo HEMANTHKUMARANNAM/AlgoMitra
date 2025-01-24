@@ -3,20 +3,21 @@ import { AuthContext } from './AuthContext';  // Importing the AuthProvider's us
 import { get, ref, onValue } from 'firebase/database';  // Firebase imports for Realtime Database
 import { database } from "../firebase";
 
-// Create a context to share the total number of questions
+// Create a context to share the progress and completion data
 const QuestionContext = createContext();
 
 export const useQuestions = () => useContext(QuestionContext);
 
 const QuestionProvider = ({ children }) => {
-  const { user, loading } = useContext(AuthContext);  // Access the user and loading state from AuthProvider
-  const [totalQuestions, setTotalQuestions] = useState(0);
+  const { user, loading } = useContext(AuthContext); // Access the user and loading state from AuthProvider
+  const [courseProgress, setCourseProgress] = useState({});
+  const [overallProgress, setOverallProgress] = useState(0);
 
-
-  // Fetch total number of questions and calculate progress
+  // Fetch course progress and overall completion
   useEffect(() => {
     if (loading || !user) {
-      setTotalQuestions(0);
+      setCourseProgress({});
+      setOverallProgress(0);
       return;
     }
 
@@ -30,38 +31,51 @@ const QuestionProvider = ({ children }) => {
       const statusesSnapshot = await get(ref(database, `/results/${userId}`));
       const fetchedStatuses = statusesSnapshot.val() || {};
 
-      let complete = 0;
+      let totalCompleted = 0;
+      let totalQuestions = 0;
+      const progressByCourse = {};
 
-      // Count completed questions
-      for (const questionId in fetchedStatuses) {
-        if (fetchedStatuses[questionId] === true) {
-          complete++;
-        }
-      }
-
-      // Count total questions in Problems and Patterns
-      let count = 0;
+      // Calculate completion for each course
       for (const course in data.algomitra) {
-        count += Object.keys(data.algomitra[course]).length; // Ensure each course is counted correctly
+        const questions = data.algomitra[course];
+        const totalInCourse = Object.keys(questions).length;
+        let completedInCourse = 0;
+
+        for (const questionId in questions) {
+          if (fetchedStatuses[questionId] === true) {
+            completedInCourse++;
+          }
+        }
+
+        // Store progress for the course
+        progressByCourse[course] = {
+          completed: completedInCourse,
+          total: totalInCourse,
+          percentage: totalInCourse > 0 ? (completedInCourse / totalInCourse)*100 : 0,
+        };
+
+        totalCompleted += completedInCourse;
+        totalQuestions += totalInCourse;
       }
 
-      // Set the progress as a fraction (completed/total)
-      setTotalQuestions(complete / count);
+      // Calculate overall progress
+      const overall = totalQuestions > 0 ? (totalCompleted / totalQuestions) * 100 : 0;
+
+      // Update state
+      setCourseProgress(progressByCourse);
+      setOverallProgress(overall);
     });
 
     // Cleanup the listener on component unmount or when user is loading
     return () => {
       if (unsubscribeData) {
-        unsubscribeData();  // Unsubscribe from the data listener
+        unsubscribeData(); // Unsubscribe from the data listener
       }
     };
   }, [user, loading]);
 
-
-
-
   return (
-    <QuestionContext.Provider value={{ totalQuestions}}>
+    <QuestionContext.Provider value={{ courseProgress, overallProgress }}>
       {children}
     </QuestionContext.Provider>
   );
