@@ -9,6 +9,9 @@ import { ref, set, get, child } from "firebase/database";
 import { database } from "../firebase"; // Firebase configuration
 import { AuthContext } from '../utility/AuthContext'; // Import AuthProvider
 import * as monaco from "monaco-editor";
+import { ToastContainer, toast } from "react-toastify";
+
+
 const CodeEditor = ({ lan, data }) => {
   const editorRef = useRef();
   const [value, setValue] = useState("");
@@ -76,12 +79,18 @@ const CodeEditor = ({ lan, data }) => {
   
     // Disable Copy (Ctrl + C)
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyC, () => {
-      console.log("Copy disabled");
+      toast.error("Copy disabled!", {
+                position: "top-right",
+                autoClose: 3000,
+              });
     });
   
     // Disable Paste (Ctrl + V)
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV, () => {
-      console.log("Paste disabled");
+      toast.error("Paste disabled!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     });
   
     // Ensure the editor is focused
