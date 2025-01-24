@@ -73,8 +73,21 @@ const CodeEditor = ({ lan, data }) => {
 
   const onMount = (editor) => {
     editorRef.current = editor;
+  
+    // Disable Copy (Ctrl + C)
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyC, () => {
+      console.log("Copy disabled");
+    });
+  
+    // Disable Paste (Ctrl + V)
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV, () => {
+      console.log("Paste disabled");
+    });
+  
+    // Ensure the editor is focused
     editor.focus();
   };
+  
 
   return (
     <div
@@ -97,22 +110,8 @@ const CodeEditor = ({ lan, data }) => {
           language={language}
           defaultValue={CODE_SNIPPETS[language]}
           theme={editorTheme} // Use dynamic theme
-          // onMount={onMount}
-          onMount={(editor) => {
-            // Disable copy and paste commands
-            editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyC, () => {
-              console.log("Copy disabled");
-            });
-        
-            editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV, () => {
-              console.log("Paste disabled");
-            });
-        
-            // Disable right-click menu (optional, for additional protection)
-            // editor.onContextMenu((e) => e.preventDefault());
+          onMount={onMount }
 
-
-          }}
           value={value}
           options={{
             scrollBeyondLastLine: false, // Disable extra space below

@@ -41,6 +41,9 @@ const Output = ({ editorRef, language, data }) => {
     const sourceCode = editorRef.current?.getValue();
     if (!sourceCode) return;
 
+    console.log(" anitha" + sourceCode);
+
+
     try {
       setIsRunning(true);
       setIsError(false);
