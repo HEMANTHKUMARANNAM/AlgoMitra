@@ -3,7 +3,7 @@ import { useTheme } from "../ThemeContext"; // Import Theme Context
 import { FaSun, FaMoon, FaUser } from "react-icons/fa"; // Import icons
 import { AuthContext } from "../utility/AuthContext";
 import { Image } from "react-bootstrap"; // Import Bootstrap Image component
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import {  ProgressBar} from "react-bootstrap";
 import { useQuestions } from '../utility/QuestionProvider';  // Import the custom hook
 import { name } from "../constants";
@@ -60,11 +60,13 @@ const MainNavbar = () => {
   return (
     <nav className={`navbar navbar-expand-lg ${navbarBgClass} ${navbarTextClass}`}>
       <div className="container-fluid">
+      <Link to="/home">
         <img src= {icon} />
-        {/* Brand Name */}
-        <a className="navbar-brand" style={ { color: theme === "light" ? "rgb(29, 30, 35)" :  "#f8f9fa" } } >
-          {name}
-        </a>
+
+        </Link>
+        <Link to="/home" className="navbar-brand" style={{ color: theme === "light" ? "rgb(29, 30, 35)" : "#f8f9fa", textDecoration: "none" }}>
+  {name}
+</Link>
 
         {/* Navbar Toggler for mobile view */}
         <button

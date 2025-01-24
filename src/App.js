@@ -5,6 +5,8 @@ import Problem from './pages/Problem';
 import Dashboard from './account/Dashboard';
 import ProtectedRoute from "./ProtectedRoute";
 
+import CategoryPage from './pages/CategoryPage';
+
 import "./App.css"
 
 function App() {
@@ -14,6 +16,9 @@ function App() {
         <Routes>
           {/* Public Routes: Accessible when the user is not authenticated */}
           <Route path="/home" element={ <Home />} />
+
+          <Route path="/category/:categoryId" element={<CategoryPage />} />
+
 
           {/* Protected Routes: Only accessible when the user is authenticated */}
           <Route 

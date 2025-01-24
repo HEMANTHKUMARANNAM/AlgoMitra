@@ -5,59 +5,30 @@ import { ref, get } from "firebase/database";
 import { encryptParam } from "../cryptoUtils";
 import MainNavbar from "./MainNavbar";
 import { useTheme } from "../ThemeContext";
-import { Badge, Container } from "react-bootstrap";
+import { Container, Card, Button } from "react-bootstrap";
 import { AuthContext } from "../utility/AuthContext";
-import { FaCheck, FaTimes } from "react-icons/fa";
 import LoadingScreen from "../LoadingScreen";
+
+// Import assets
+import algorithms from "../assets/algorithms.png";
+import problems from "../assets/problems.png";
+import others from "../assets/others.png";
 
 const Home = () => {
   const [categories, setCategories] = useState([]);
   const [data, setData] = useState({});
-  const [loadingc, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [userLoading, setUserLoading] = useState(true);
   const { theme } = useTheme();
   const { user } = useContext(AuthContext);
-
-  useEffect(() => {
-    if (user === undefined) {
-      setUserLoading(true);
-      return;
-    }
-    setUserLoading(false);
-  }, [user]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const questionsSnapshot = await get(ref(database, "/algomitra"));
         const fetchedQuestions = questionsSnapshot.val() || {};
-        const userId = user?.uid;
-        let fetchedStatuses = {};
-
-        if (user) {
-          const statusesSnapshot = await get(ref(database, `/results/${userId}`));
-          fetchedStatuses = statusesSnapshot.val() || {};
-        }
-
-        const mergedData = { ...fetchedQuestions };
-        for (const category in fetchedQuestions) {
-          if (fetchedQuestions[category]) {
-            for (const questionId in fetchedQuestions[category]) {
-              if (fetchedQuestions[category][questionId]) {
-                mergedData[category][questionId].status =
-                  fetchedStatuses[questionId] !== null &&
-                    (fetchedStatuses[questionId] === true ||
-                      fetchedStatuses[questionId] === false)
-                    ? fetchedStatuses[questionId]
-                    : "unknown";
-              }
-            }
-          }
-        }
-
-        setCategories(Object.keys(mergedData));
-        setData(mergedData);
+        setCategories(Object.keys(fetchedQuestions));
+        setData(fetchedQuestions);
       } catch (error) {
         console.error("Error fetching data:", error);
         setError("Failed to load data.");
@@ -67,103 +38,78 @@ const Home = () => {
     };
 
     fetchData();
-  }, [user]);
-
+  }, []);
 
   const cardStyle = {
-    backgroundColor: theme === "light" ? "#f8f9fa" : "rgb(29, 30, 35)", // Apply light or dark background color
-    color: theme === "light" ? "#000" : "#fff", // Apply light or dark text color
-
+    backgroundColor: theme === "light" ? "#f8f9fa" : "rgb(29, 30, 35)", // Light or dark background
+    color: theme === "light" ? "#000" : "#fff", // Light or dark text
   };
+
   const buttonClass = theme === "light" ? "btn-primary" : "btn-outline-light";
 
-  if (userLoading || loadingc || error) {
+  if (loading || error) {
     return <LoadingScreen />;
   }
 
+  // Category-specific images
+  const categoryImages = {
+    problems : problems,
+    algorithms: algorithms,
+    dataStructures: "https://via.placeholder.com/300x200?text=Data+Structures",
+    mathematics: "https://via.placeholder.com/300x200?text=Mathematics",
+  };
+
+  // CSS for fixed image size
+  const imageStyle = {
+    // width: "100%", // Fixed width
+    // height: "200px", // Fixed height
+    // objectFit: "cover", // Maintain aspect ratio and crop if necessary
+    // margin: "0 auto", // Center image inside the card
+  };
+
   return (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-      {/* Upper Div (fits its content dynamically) */}
+      {/* Navbar */}
       <div style={{ backgroundColor: "#343a40", color: "white", width: "100%" }}>
         <MainNavbar />
       </div>
 
-      {/* Scrollable Lower Div */}
-      <div style={{
-        flex: 1,
-        overflowY: "auto",
-        width: "100%",
-        backgroundColor: theme === "light" ? "#f8f9fa" : "rgb(29, 30, 35)", // Apply light or dark background color
-      }}>
-        <Container
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            width: "100%",
-          }}
-        >
-          {/* <div className="container" > */}
+      {/* Scrollable content */}
+      <div
+        style={{
+          flex: 1,
+          overflowY: "auto",
+          width: "100%",
+          backgroundColor: theme === "light" ? "#f8f9fa" : "rgb(29, 30, 35)",
+        }}
+      >
+        <Container className="mt-4">
           {categories.length > 0 ? (
-            categories.map((category, index) => (
-              <div className="mb-4" key={category}>
-                <h5 className="text-capitalize mb-3"
-                  style={cardStyle}
-                >
-                  {index + 1}. {category}
-                </h5>
-                <ul className="list-group">
-                  {Object.keys(data[category] || {}).map((key, questionIndex) => {
-                    const encryptedCourse = encryptParam(category);
-                    const encryptedQuestionId = encryptParam(key);
-                    const problemData = data[category][key] || {};
-                    const questionName = problemData.questionname || "Unnamed Question";
-                    const status = problemData.status;
+            <div className="row">
+              {categories.map((category, index) => {
+                const encryptedCategory = encryptParam(category);
+                const imageUrl = categoryImages[category.toLowerCase()] || others;
 
-                    // Determine badge color and text based on status
-                    let statusBadge = "secondary";
-                    if (status === true) statusBadge = "success";
-                    else if (status === false) statusBadge = "warning";
-
-                    return (
-                      <li
-                        className={`list-group-item d-flex justify-content-between align-items-center `}
-                        key={key}
-                        // style={cardStyle}
-
-                        style={{
-                          ...cardStyle,
-                          borderColor: theme === 'light' ? "#f8f9fa" : theme=== 'dark' ? "rgb(29, 30, 35)" : 'gray', // Customize as needed
-                          borderWidth: '1px',
-                          borderStyle: 'solid'
-                        }}
-                        
-                      >
-                        <div className="d-flex align-items-center flex-grow-1">
-                          <span className="me-2" style={{ flex: 1 }}>
-                            {index + 1}.{questionIndex + 1} {questionName}
-                          </span>
-                          {user && (
-                            <Badge pill bg={statusBadge} className="me-2">
-                              {status === true ? (
-                                <FaCheck />
-                              ) : status === false ? (
-                                <FaTimes />
-                              ) : null}
-                            </Badge>
-                          )}
-                        </div>
-                        <Link
-                          to={`/prob/${encryptedCourse}/${encryptedQuestionId}`}
-                          className={`btn btn-sm ${buttonClass}`}
-                        >
-                          View Problem
+                return (
+                  <div className="col-md-4 mb-4 d-flex justify-content-center" key={category}>
+                    <Card style={{ ...cardStyle, width: "320px" }}> {/* Set consistent card width */}
+                      <Card.Img variant="top" src={imageUrl} alt={category} style={imageStyle} />
+                      <Card.Body>
+                        <Card.Title className="text-capitalize">
+                          {index + 1}. {category}
+                        </Card.Title>
+                        <Card.Text>
+                          Explore problems in the <strong>{category}</strong> category.
+                        </Card.Text>
+                        <Link to={`/category/${encryptedCategory}`}>
+                          <Button className={buttonClass}>View Category</Button>
                         </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            ))
+                      </Card.Body>
+                    </Card>
+                  </div>
+                );
+              })}
+            </div>
           ) : (
             <div className="text-center">No categories available.</div>
           )}

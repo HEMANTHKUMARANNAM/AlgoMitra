@@ -8,6 +8,7 @@ import { useQuestions } from '../utility/QuestionProvider';  // Import the custo
 import { name } from "../constants";
 
 import sigin from '../assets/sigin.jpg';  // Make sure this path is correct
+import MainNavbar from "../pages/MainNavbar";
 
 const AppNavbar = () => {
   const { user, signInWithGoogle, logOut, isLoading } = useContext(AuthContext);
@@ -41,21 +42,10 @@ const AppNavbar = () => {
   return (
     <>
 
-<div className="container-fluid d-flex flex-column" style={{ height: '100vh' }}>
+<div className="container-fluid d-flex flex-column" style={{ height: '100vh'  , width : '100%' }}>
       {/* Upper div */}
       <div className="bg text-white p-4">
-         {/* Navbar */}
-      <Navbar bg="light" variant="light" expand="lg" style={{ zIndex: 10 }}>
-        <Container>
-          <Navbar.Brand className="text-dark">{name}</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto">
-              <Nav.Link onClick={() => navigate("/home")} className="text-dark">Home</Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+      <MainNavbar/>
       </div>
       
       {/* Lower div */}
