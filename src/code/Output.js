@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { Button, Spinner, Form, Row, Col } from "react-bootstrap";
 import { executeCode } from "../api";
 import { useParams } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useTheme } from "../ThemeContext";
 import { database } from "../firebase";
@@ -40,9 +40,6 @@ const Output = ({ editorRef, language, data }) => {
   const runCode = async () => {
     const sourceCode = editorRef.current?.getValue();
     if (!sourceCode) return;
-
-    console.log(" anitha" + sourceCode);
-
 
     try {
       setIsRunning(true);
@@ -156,7 +153,6 @@ const Output = ({ editorRef, language, data }) => {
         color: theme === "light" ? "#000" : "#fff",
       }}
     >
-      <ToastContainer />
       <div className="row">
         <div className="col-md-12 d-flex flex-column" style={{ height: "auto" }}>
           <Form.Group className="mb-3" controlId="codeInput">

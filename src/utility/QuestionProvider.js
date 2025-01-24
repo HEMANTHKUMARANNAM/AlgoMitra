@@ -41,8 +41,8 @@ const QuestionProvider = ({ children }) => {
 
       // Count total questions in Problems and Patterns
       let count = 0;
-      for (const course in data.codemasters) {
-        count += Object.keys(data.codemasters[course]).length; // Ensure each course is counted correctly
+      for (const course in data.algomitra) {
+        count += Object.keys(data.algomitra[course]).length; // Ensure each course is counted correctly
       }
 
       // Set the progress as a fraction (completed/total)
