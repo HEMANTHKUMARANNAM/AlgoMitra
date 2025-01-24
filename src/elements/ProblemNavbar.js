@@ -78,8 +78,8 @@ const ProblemNavbar = ({ toggleMode, activeMode, setlan, lan , nextQuestionUrl }
   useEffect(() => {
     if (totalQuestions !== undefined) {
       const updatedProgress = totalQuestions * 100; // Convert to percentage
+      setProgress(updatedProgress);
     }
-    console.log(totalQuestions);
   }, [totalQuestions]);
 
   // Format language display
