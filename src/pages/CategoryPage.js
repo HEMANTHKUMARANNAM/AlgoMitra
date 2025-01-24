@@ -111,7 +111,7 @@ const CategoryPage = () => {
         <div style={{ flex: 1, overflowY: "auto" }}>
           <Container className="mt-4">
             <h3 className="mb-4" style={cardStyle}>
-              Questions in {decryptParam(categoryId)}
+              Questions in {String(decryptParam(categoryId)).substring(3)} Level
             </h3>
 
             <div 

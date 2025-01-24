@@ -88,10 +88,10 @@ const Home = () => {
                       <Card.Img variant="top" src={imageUrl} alt={category}  />
                       <Card.Body>
                         <Card.Title className="text-capitalize">
-                          {index + 1}. {category}
+                          {index + 1}. {String(category).substring(3)}
                         </Card.Title>
                         <Card.Text>
-                          Explore problems in the <strong>{category}</strong> category.
+                          Explore problems in the <strong>{String(category).substring(3)} Level</strong> category.
                                    <div 
                             className="progress-container" 
                             style={{ ...cardStyle, display: 'flex', alignItems: 'center', gap: '10px', padding: '10px' }}
