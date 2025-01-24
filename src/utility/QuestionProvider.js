@@ -12,6 +12,8 @@ const QuestionProvider = ({ children }) => {
   const { user, loading } = useContext(AuthContext); // Access the user and loading state from AuthProvider
   const [courseProgress, setCourseProgress] = useState({});
   const [overallProgress, setOverallProgress] = useState(0);
+    const [isLoading, setIsLoading] = useState(true); // Track loading state
+  
 
   // Fetch course progress and overall completion
   useEffect(() => {
@@ -64,6 +66,8 @@ const QuestionProvider = ({ children }) => {
       // Update state
       setCourseProgress(progressByCourse);
       setOverallProgress(overall);
+      setIsLoading(false); // Set loading to false when data is fetched
+
     });
 
     // Cleanup the listener on component unmount or when user is loading
@@ -75,7 +79,7 @@ const QuestionProvider = ({ children }) => {
   }, [user, loading]);
 
   return (
-    <QuestionContext.Provider value={{ courseProgress, overallProgress }}>
+    <QuestionContext.Provider value={{ courseProgress, overallProgress , isLoading }}>
       {children}
     </QuestionContext.Provider>
   );

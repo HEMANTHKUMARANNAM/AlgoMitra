@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useContext, useState } from "react";
-import { Navbar, Nav, ProgressBar, Button, Dropdown, Container, Badge } from "react-bootstrap";
+import { Navbar, Nav, Button, Dropdown, Container, Badge } from "react-bootstrap";
 import { CODE_SNIPPETS } from "../constants"; // Adjust path as needed
-import { FaCode, FaMoon, FaSun, FaCheck, FaTimes } from "react-icons/fa"; // Icons for theme toggle, success, and failure
+import { FaCode,  FaCheck, FaTimes } from "react-icons/fa"; // Icons for theme toggle, success, and failure
 import { useTheme } from "../ThemeContext"; // Import Theme Context
 import { useNavigate, useParams } from "react-router-dom"; // Hook for navigation
 import { ref, onValue } from "firebase/database";
@@ -23,7 +23,7 @@ const ProblemNavbar = ({ toggleMode, activeMode, setlan, lan , nextQuestionUrl }
     
   
 
-    const {courseProgress} = useQuestions();
+    const {courseProgress , isLoading} = useQuestions();
 
     // Set photoURL when user is authenticated
       useEffect(() => {
@@ -101,7 +101,7 @@ const ProblemNavbar = ({ toggleMode, activeMode, setlan, lan , nextQuestionUrl }
 
 
   // Handle loading state or unauthorized access
-  if (loading) {
+  if (loading || isLoading) {
     return <LoadingScreen/> // Replace with your custom loading spinner
   }
 
