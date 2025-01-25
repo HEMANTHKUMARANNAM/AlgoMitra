@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import DOMPurify from "dompurify"; 
+import DOMPurify from "dompurify";
 import CodeEditor from "../code/CodeEditor";
 import debounce from 'lodash.debounce'; // Import debounce
 import { useTheme } from '../ThemeContext'; // Import Theme Context
+import ReactPlayer from "react-player";
 
 function CodeWindow({ mode, data, lan }) {
   const [leftColWidth, setLeftColWidth] = useState(50);
@@ -12,9 +13,9 @@ function CodeWindow({ mode, data, lan }) {
   const { theme } = useTheme(); // Access the theme from context
 
   const testdata = data.testcases.slice(0, 3).map((testcase) => ({
-  input: testcase.input,
-  output: testcase.expectedOutput,
-}));
+    input: testcase.input,
+    output: testcase.expectedOutput,
+  }));
 
   const handleMouseDown = (e) => {
     setDragging(true);
@@ -97,7 +98,7 @@ function CodeWindow({ mode, data, lan }) {
       style={{
 
         backgroundColor: theme === "dark" ? "#343a40" : "#ffffff", // Background based on theme
-        
+
         display: "flex",
         height: "100vh", // Parent container will fill the entire viewport height
         margin: 0,
@@ -132,7 +133,41 @@ function CodeWindow({ mode, data, lan }) {
               padding: "1rem",
             }}
           >
+
+
+
+
             <div>
+
+
+
+              {mode === "solution" && (
+
+                data.video ? (
+
+                <>
+                <h1>Video Solution :</h1>
+                  <div className="flex justify-center items-center p-4">
+                    <ReactPlayer
+                      url={data.video}
+                      controls
+                      width="100%"
+                      height="360px"
+                    />
+                  </div>
+                 
+
+                </>
+                 )
+
+                 :( <></>)
+
+              )}
+
+
+
+
+
               <div
                 dangerouslySetInnerHTML={
                   mode === "statement"
@@ -140,6 +175,10 @@ function CodeWindow({ mode, data, lan }) {
                     : getSanitizedHTML(data.solution)
                 }
               />
+
+
+
+
 
               {mode === "statement" && (
                 <div style={tableStyles.container}>
