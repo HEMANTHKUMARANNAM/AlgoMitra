@@ -15,7 +15,7 @@ import { Image } from "react-bootstrap"; // Import Bootstrap Image component
 import lightmode from "../assets/lightmode.png";
 import darkmode from "../assets/darkmode.png";
 
-const ProblemNavbar = ({ toggleMode, activeMode, setlan, lan , nextQuestionUrl }) => {
+const ProblemNavbar = ({ toggleMode, activeMode, setlan, lan , nextQuestionUrl , prevQuestionUrl}) => {
   const { theme, toggleTheme } = useTheme(); // Access theme and toggle function
   const navigate = useNavigate(); // Hook for navigation
   const { course, questionId } = useParams();
@@ -47,6 +47,14 @@ const ProblemNavbar = ({ toggleMode, activeMode, setlan, lan , nextQuestionUrl }
   function handlenext() {
     if (nextQuestionUrl) {
       navigate(`${nextQuestionUrl}`);
+    } else {
+      navigate(`/category/${course}`);
+    }
+  }
+  // Handler for the Next button
+  function handleprev() {
+    if (prevQuestionUrl) {
+      navigate(`${prevQuestionUrl}`);
     } else {
       navigate(`/category/${course}`);
     }
@@ -215,6 +223,9 @@ const ProblemNavbar = ({ toggleMode, activeMode, setlan, lan , nextQuestionUrl }
 
 
           {/* Next Button */}
+          <Button variant="primary" className="ms-3" onClick={handleprev}>
+            Prev
+          </Button>
           <Button variant="primary" className="ms-3" onClick={handlenext}>
             Next
           </Button>

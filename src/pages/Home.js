@@ -9,7 +9,7 @@ import { Container, Card, Button } from "react-bootstrap";
 import LoadingScreen from "../LoadingScreen";
 
 // Import assets
-import algorithms from "../assets/algorithms.png";
+// import algorithms from "../assets/algorithms.png";
 import problems from "../assets/problems.png";
 import others from "../assets/7967811_3819075 4.svg";
 import datapoints1 from "../assets/Data points-pana.svg";

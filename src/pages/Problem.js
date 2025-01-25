@@ -5,7 +5,6 @@ import ProblemNavbar from "../elements/ProblemNavbar";
 import { database } from "../firebase";
 import { ref, get } from "firebase/database";
 import { decryptParam, encryptParam } from "../cryptoUtils";
-import { useQuestions } from '../utility/QuestionProvider';  // Import the custom hook
 import LoadingScreen from "../LoadingScreen";
 
 
@@ -19,7 +18,6 @@ function Problem() {
   const decryptedCourse = decryptParam(course);
   const decryptedQuestionId = decryptParam(questionId);
 
-  const { totalQuestions } = useQuestions(); // Get totalQuestions from the custom hook
 
 
 
@@ -62,8 +60,27 @@ function Problem() {
             nextQuestionUrl = `/prob/${course}/${encryptParam(nextQuestionId)}`;
           }
 
+          let prevQuestionUrl= null;
+
+          
+
+          if (currentIndex-1 >= 0) {
+            const prevQuestionId = questionIds[currentIndex - 1];
+            prevQuestionUrl = `/prob/${course}/${encryptParam(prevQuestionId)}`;
+          }
+
+          
+
+        
+
+          question.prevQuestionUrl = prevQuestionUrl;
           // Add next question URL to the question data
           question.nextQuestionUrl = nextQuestionUrl;
+
+
+
+          console.log(question);
+
           setQuestionData(question);
         } else {
           // If no data for the current question, redirect to home or last question
@@ -91,8 +108,8 @@ function Problem() {
           activeMode={mode}
           setlan={setLan}
           lan={lan}
-          progress={totalQuestions ? (totalQuestions / 100) : 0}  // Assuming totalQuestions represents a fraction
           nextQuestionUrl={questionData?.nextQuestionUrl} // Pass next question URL from the question data
+          prevQuestionUrl={questionData?.prevQuestionUrl} // Pass next question URL from the question data
         />
       </div>
 

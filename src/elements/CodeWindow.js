@@ -11,11 +11,10 @@ function CodeWindow({ mode, data, lan }) {
   const [initialWidth, setInitialWidth] = useState(0);
   const { theme } = useTheme(); // Access the theme from context
 
-  const testdata = [
-    { input: data.testcases[0].input, output: data.testcases[0].expectedOutput },
-    { input: data.testcases[1].input, output: data.testcases[1].expectedOutput },
-    { input: data.testcases[2].input, output: data.testcases[2].expectedOutput },
-  ];
+  const testdata = data.testcases.slice(0, 3).map((testcase) => ({
+    input: testcase.input,
+    output: testcase.expectedOutput,
+  }));
 
   const handleMouseDown = (e) => {
     setDragging(true);
