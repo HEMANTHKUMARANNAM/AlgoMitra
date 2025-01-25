@@ -18,6 +18,9 @@ function CodeWindow({ mode, data, lan }) {
   }));
 
   const handleMouseDown = (e) => {
+    // Prevent right-click or middle-click from starting the dragging
+    if (e.button !== 0) return;
+
     setDragging(true);
     setMouseStartX(e.clientX);
     setInitialWidth(leftColWidth);
@@ -30,24 +33,33 @@ function CodeWindow({ mode, data, lan }) {
       const newWidth = initialWidth + (deltaX / window.innerWidth) * 100;
       if (newWidth >= 10 && newWidth <= 90) setLeftColWidth(newWidth);
     }
-  }, 10); // 10ms debounce delay
+  }, 15); // Increased debounce delay to make dragging smoother
 
   const handleMouseUp = () => {
     setDragging(false);
+  };
+
+  const handleRightClick = (e) => {
+    if (dragging) {
+      setDragging(false); // Stop dragging if right-click occurs
+    }
   };
 
   useEffect(() => {
     if (dragging) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
+      window.addEventListener("contextmenu", handleRightClick); // Added to handle right-click
     } else {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("contextmenu", handleRightClick); // Clean up event listener
     }
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("contextmenu", handleRightClick); // Clean up on unmount
     };
   }, [dragging]);
 
@@ -96,9 +108,7 @@ function CodeWindow({ mode, data, lan }) {
   return (
     <div
       style={{
-
         backgroundColor: theme === "dark" ? "#343a40" : "#ffffff", // Background based on theme
-
         display: "flex",
         height: "100vh", // Parent container will fill the entire viewport height
         margin: 0,
@@ -120,7 +130,6 @@ function CodeWindow({ mode, data, lan }) {
         <div
           className="d-flex flex-column"
           style={{
-            // border: "1px solid #ddd",
             width: "100%",
             overflowY: "auto", // Allows scrolling if the content overflows
           }}
@@ -133,79 +142,61 @@ function CodeWindow({ mode, data, lan }) {
               padding: "1rem",
             }}
           >
-
-
-
-
-            <div>
-
-
-
-              {mode === "solution" && (
-
-                data.video ? (
-
-                <>
+            {mode === "solution" && data.video && (
+              <>
                 <h1>Video Solution :</h1>
-                  <div className="flex justify-center items-center p-4">
-                    <ReactPlayer
-                      url={data.video}
-                      controls
-                      width="100%"
-                      height="360px"
-                    />
-                  </div>
-                 
-
-                </>
-                 )
-
-                 :( <></>)
-
-              )}
-
-
-
-
-
-              <div
-                dangerouslySetInnerHTML={
-                  mode === "statement"
-                    ? getSanitizedHTML(data.question + "")
-                    : getSanitizedHTML(data.solution)
-                }
-              />
-
-
-
-
-
-              {mode === "statement" && (
-                <div style={tableStyles.container}>
-                  <h3 style={tableStyles.heading}>Sample Test Cases :</h3>
-                  <table style={tableStyles.table}>
-                    <thead>
-                      <tr style={tableStyles.tr}>
-                        <th style={tableStyles.th}>Input</th>
-                        <th style={tableStyles.th}>Output</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {testdata.map((row, index) => (
-                        <tr key={index} style={tableStyles.tr}>
-                          <td style={tableStyles.td}>
-                            <div dangerouslySetInnerHTML={{ __html: row.input.replace(/\n/g, "<br>") }} />
-                          </td>
-                          <td style={tableStyles.td}>
-                            <div dangerouslySetInnerHTML={{ __html: row.output.replace(/\n/g, "<br>") }} />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div
+                  className="flex justify-center items-center p-4"
+                  style={{
+                    display: "flex", // Ensure flex is applied
+                    justifyContent: "center", // Center the content horizontally
+                    alignItems: "center", // Center the content vertically
+                    padding: "20px", // Set padding around the content
+                  }}
+                >
+                  <ReactPlayer
+                    url={data.video}
+                    controls
+                    width="100%"
+                    height="360px"
+                  />
                 </div>
-              )}
-            </div>
+              </>
+            )}
+
+            <div
+              dangerouslySetInnerHTML={
+                mode === "statement"
+                  ? getSanitizedHTML(data.question + "")
+                  : getSanitizedHTML(data.solution)
+              }
+            />
+
+            {mode === "statement" && (
+              <div style={tableStyles.container}>
+                <h3 style={tableStyles.heading}>Sample Test Cases :</h3>
+                <table style={tableStyles.table}>
+                  <thead>
+                    <tr style={tableStyles.tr}>
+                      <th style={tableStyles.th}>Input</th>
+                      <th style={tableStyles.th}>Output</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {testdata.map((row, index) => (
+                      <tr key={index} style={tableStyles.tr}>
+                        <td style={tableStyles.td}>
+                          <div dangerouslySetInnerHTML={{ __html: row.input.replace(/\n/g, "<br>") }} />
+                        </td>
+                        <td style={tableStyles.td}>
+                          <div dangerouslySetInnerHTML={{ __html: row.output.replace(/\n/g, "<br>") }} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
       </div>
