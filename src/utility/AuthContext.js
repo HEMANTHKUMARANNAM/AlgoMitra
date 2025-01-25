@@ -42,10 +42,13 @@ export const AuthProvider = ({ children }) => {
       const token = credential.accessToken; // Google access token
       const user = result.user; // User information
       setUser(user); // Set authenticated user
-      console.log('User signed in:', user);
-      
+      // console.log('User signed in:', user);
+
+      return { success: true, user }; // Return success
+
     } catch (error) {
       console.error('Error during sign in:', error.message);
+      return { success: false, error: error.message }; // Return failure
     }
   };
 

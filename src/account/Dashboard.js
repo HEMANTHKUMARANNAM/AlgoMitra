@@ -4,7 +4,7 @@ import { FaSignInAlt, FaUser } from "react-icons/fa"; // Default icon
 import { AuthContext } from "../utility/AuthContext";
 import LoadingScreen from "../LoadingScreen";
 import { useQuestions } from '../utility/QuestionProvider';  // Import the custom hook
-
+import { useNavigate } from "react-router-dom";
 import sigin from '../assets/rb_936.png';  // Make sure this path is correct
 import MainNavbar from "../pages/MainNavbar";
 
@@ -16,8 +16,24 @@ const AppNavbar = () => {
 
 
   const { theme } = useTheme();
+
+  const navigate = useNavigate();
  
   const { overallProgress  } = useQuestions(); // Get totalQuestions from the custom hook
+
+  const handleSignIn = async () => {
+    const result = await signInWithGoogle(); // Wait for the function to complete
+    if (result.success) {
+      console.log('Sign-in successful:', result.user);
+      navigate("/home");
+      // Proceed to the next step, e.g., navigate to a different page or update UI
+    } else {
+      console.error('Sign-in failed:', result.error);
+      // Show an error message to the user
+      alert(`Sign-in failed: ${result.error}`);
+    }
+  };
+  
 
   
   // Set photoURL after user is authenticated
@@ -113,7 +129,7 @@ const AppNavbar = () => {
                   ) : (
                     <div>
                       <h2 style={{ color : currentTheme.textColor} }>Please Sign In to Continue</h2>
-                      <Button variant="outline-dark" onClick={signInWithGoogle} style={{ backgroundColor: currentTheme.buttonColor , color: currentTheme.textColor }}>
+                      <Button variant="outline-dark" onClick={handleSignIn} style={{ backgroundColor: currentTheme.buttonColor , color: currentTheme.textColor }}>
                         <FaSignInAlt /> Sign In with Google
                       </Button>
                     </div>
