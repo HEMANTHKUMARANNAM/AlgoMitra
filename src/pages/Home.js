@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { database } from "../firebase";
 import { ref, get } from "firebase/database";
@@ -6,13 +6,15 @@ import { encryptParam } from "../cryptoUtils";
 import MainNavbar from "./MainNavbar";
 import { useTheme } from "../ThemeContext";
 import { Container, Card, Button } from "react-bootstrap";
-import { AuthContext } from "../utility/AuthContext";
 import LoadingScreen from "../LoadingScreen";
 
 // Import assets
 import algorithms from "../assets/algorithms.png";
 import problems from "../assets/problems.png";
-import others from "../assets/others.png";
+import others from "../assets/7967811_3819075 4.svg";
+import datapoints1 from "../assets/Data points-pana.svg";
+import datapoints2 from "../assets/Data points-rafiki.svg";
+
 import { useQuestions } from '../utility/QuestionProvider';  // Import the custom hook
 
 const Home = () => {
@@ -41,7 +43,7 @@ const Home = () => {
   }, []);
 
   const cardStyle = {
-    backgroundColor: theme === "light" ? "#f8f9fa" : "rgb(29, 30, 35)", // Light or dark background
+    backgroundColor: theme === "light" ? "#f8f9fa" : "#212529", // Light or dark background
     color: theme === "light" ? "#000" : "#fff", // Light or dark text
   };
 
@@ -53,8 +55,9 @@ const Home = () => {
 
   // Category-specific images
   const categoryImages = {
-    problems : problems,
-    algorithms: algorithms,
+    "001basic" : problems,
+    "002intermediate": datapoints1,
+    "003advanced" : datapoints2
 
   };
 
@@ -72,7 +75,7 @@ const Home = () => {
           flex: 1,
           overflowY: "auto",
           width: "100%",
-          backgroundColor: theme === "light" ? "#f8f9fa" : "rgb(29, 30, 35)",
+          backgroundColor: theme === "light" ? "#f8f9fa" : "#212529",
         }}
       >
         <Container className="mt-4">
@@ -81,7 +84,7 @@ const Home = () => {
               {categories.map((category, index) => {
                 const encryptedCategory = encryptParam(category);
                 const imageUrl = categoryImages[category.toLowerCase()] || others;
-
+                console.log(category.toLowerCase());
                 return (
                   <div className="col-md-4 mb-4 d-flex justify-content-center" key={category}>
                     <Card style={{ ...cardStyle, width: "320px" }}> {/* Set consistent card width */}

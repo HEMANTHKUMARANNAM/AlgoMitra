@@ -14,6 +14,7 @@ import myGifdark from '../assets/Data points.gif'; // If the GIF is in your src 
 import { ToastContainer , toast} from "react-toastify";
 import { useQuestions } from '../utility/QuestionProvider';  // Import the custom hook
 
+
 const CategoryPage = () => {
   const { categoryId } = useParams();
   const [questions, setQuestions] = useState([]);
@@ -76,7 +77,7 @@ const CategoryPage = () => {
   }, [categoryId, user]);
 
   const cardStyle = {
-    backgroundColor: theme === "light" ? "#f8f9fa" : "rgb(29, 30, 35)",
+    backgroundColor: theme === "light" ? "#f8f9fa" : "#212529",
     color: theme === "light" ? "#000" : "#fff",
   };
 
@@ -104,7 +105,7 @@ const CategoryPage = () => {
           flex: 1,
           display: "flex",
           width: "100%",
-          backgroundColor: theme === "light" ? "#f8f9fa" : "rgb(29, 30, 35)",
+          backgroundColor: theme === "light" ? "#f8f9fa" : "#212529",
         }}
       >
         {/* Left Half: Questions List */}
