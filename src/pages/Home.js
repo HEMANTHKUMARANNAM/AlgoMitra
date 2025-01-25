@@ -56,9 +56,8 @@ const Home = () => {
   // Category-specific images
   const categoryImages = {
     "001basic" : problems,
-    "002intermediate": datapoints1,
-    "003advanced" : datapoints2
-
+    "004sorting": datapoints2,
+    "005advanced" : datapoints1
   };
 
 
