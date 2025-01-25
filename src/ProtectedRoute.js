@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import LoadingScreen from "./LoadingScreen";
 
 const ProtectedRoute = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
@@ -16,7 +17,7 @@ const ProtectedRoute = ({ children }) => {
 
   if (isAuthenticated === null) {
     // Show a loader while checking auth state
-    return <div>Loading...</div>;
+    return <LoadingScreen/>;
 
   }
 
