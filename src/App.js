@@ -2,12 +2,11 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Problem from './pages/Problem';
-import Dashboard from './account/Dashboard';
 import ProtectedRoute from "./ProtectedRoute";
 
 import CategoryPage from './pages/CategoryPage';
+import Profile from './account/Profile';
 
-import "./App.css"
 
 function App() {
 
@@ -22,8 +21,8 @@ function App() {
 
           {/* Protected Routes: Only accessible when the user is authenticated */}
           <Route 
-            path="/dashboard" 
-            element=  {<Dashboard />}  
+            path="/profile" 
+            element=  {<Profile />}  
           />
           <Route 
             path="/prob/:course/:questionId" 

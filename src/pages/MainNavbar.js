@@ -39,9 +39,9 @@ const MainNavbar = ( {command} ) => {
     setPhotoURL(null); // Use default icon if image fails to load
   };
 
-  // Navigate to dashboard or login page
+  // Navigate to login page
   const handleProfileClick = () => {
-    navigate("/dashboard"); // Redirect based on authentication status
+    navigate("/profile"); // Redirect based on authentication status
   };
 
   

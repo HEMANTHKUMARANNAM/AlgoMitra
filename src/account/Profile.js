@@ -10,7 +10,7 @@ import MainNavbar from "../pages/MainNavbar";
 
 import { useTheme } from "../ThemeContext";
 
-const AppNavbar = () => {
+const Profile = () => {
   const { user, signInWithGoogle, logOut, isLoading } = useContext(AuthContext);
   const [photoURL, setPhotoURL] = useState(null);
 
@@ -144,4 +144,4 @@ const AppNavbar = () => {
   );
 };
 
-export default AppNavbar;
+export default Profile;

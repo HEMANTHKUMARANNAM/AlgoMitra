@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, useCallback, useContext } from "react";
-import { Editor } from "@monaco-editor/react";
-import { CODE_SNIPPETS } from "../constants";
+import { Editor , loader} from "@monaco-editor/react";
+import { CODE_SNIPPETS , javasuggestions } from "../constants";
 import Output from "./Output";
 import { useTheme } from "../ThemeContext"; // Import Theme Context
 import { decryptParam } from "../cryptoUtils";
@@ -66,24 +66,19 @@ const CodeEditor = ({ lan, data }) => {
     [user?.uid, decryptedQuestionId, language]
   );
 
-  
-
-  useEffect(() => {
-    setLanguage(lan); // Set language based on the prop
-    loadCode();
-  }, [lan, user?.uid, decryptedQuestionId]); // Effect depends on lan and user
-
-  const onMount = (editor) => {
+  const handleEditorDidMount = (editor, monaco) => {
     editorRef.current = editor;
-  
-    // Disable Copy (Ctrl + C)
-    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyC, () => {
-      toast.error("Copy disabled!", {
-                position: "top-right",
-                autoClose: 3000,
-              });
-    });
-  
+
+      // Disable Copy (Ctrl + C)
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyC, () => {
+        toast.error("Copy disabled!", {
+                  position: "top-right",
+                  autoClose: 3000,
+                });
+      });
+
+
+        
     // Disable Paste (Ctrl + V)
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV, () => {
       toast.error("Paste disabled!", {
@@ -92,16 +87,79 @@ const CodeEditor = ({ lan, data }) => {
       });
     });
 
-    editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Insert, () => {
-      toast.error("Shift insert!😭", {
+       editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Insert, () => {
+      toast.error("Shift insert disabled!😭", {
         position: "top-right",
         autoClose: 3000,
       });
+
+  
     });
   
-    // Ensure the editor is focused
-    editor.focus();
+
+    
+
+    // Register custom auto-suggestions for JavaScript
+    monaco.languages.registerCompletionItemProvider("java", {
+      provideCompletionItems: () => {
+  
+
+      const suggestions = [
+        ...javasuggestions.map(item => ({
+          label: item.label,
+          kind: monaco.languages.CompletionItemKind.Snippet,
+          insertText: item.insertText,
+          insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+          documentation: item.documentation,
+          additionalTextEdits: item.additionalTextEdits
+          
+        }))
+      ];
+  
+        
+        
+        return { suggestions };
+      },
+    });
+
+
+
+   // Only trigger suggestions after typing the first letter
+   let isTypingStarted = false;
+
+   editor.onDidChangeModelContent(() => {
+     // Check if user has started typing (after the first letter)
+     if (!isTypingStarted && editor.getValue().length > 0) {
+       isTypingStarted = true;
+       editor.trigger('keyboard', 'editor.action.triggerSuggest', {});
+     }
+   });
+
+
+     // Ensure the editor is focused
+     editor.focus();
+  
   };
+
+ 
+  
+
+  
+
+  
+
+  useEffect(() => {
+    setLanguage(lan); // Set language based on the prop
+    loadCode();
+  }, [lan, user?.uid, decryptedQuestionId]); // Effect depends on lan and user
+
+
+  
+
+
+ 
+
+  
   
 
   return (
@@ -125,7 +183,7 @@ const CodeEditor = ({ lan, data }) => {
           language={language}
           defaultValue={CODE_SNIPPETS[language]}
           theme={editorTheme} // Use dynamic theme
-          onMount={onMount }
+          onMount={handleEditorDidMount }
 
           value={value}
           options={{
