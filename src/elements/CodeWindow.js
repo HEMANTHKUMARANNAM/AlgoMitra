@@ -3,7 +3,9 @@ import DOMPurify from "dompurify";
 import CodeEditor from "../code/CodeEditor";
 import debounce from 'lodash.debounce'; // Import debounce
 import { useTheme } from '../ThemeContext'; // Import Theme Context
+import { Image, Alert } from 'react-bootstrap';
 import ReactPlayer from "react-player";
+import nosolution from "../assets/9233845_4117020.svg";
 
 function CodeWindow({ mode, data, lan }) {
   const [leftColWidth, setLeftColWidth] = useState(50);
@@ -18,7 +20,6 @@ function CodeWindow({ mode, data, lan }) {
   }));
 
   const handleMouseDown = (e) => {
-    // Prevent right-click or middle-click from starting the dragging
     if (e.button !== 0) return;
 
     setDragging(true);
@@ -33,148 +34,130 @@ function CodeWindow({ mode, data, lan }) {
       const newWidth = initialWidth + (deltaX / window.innerWidth) * 100;
       if (newWidth >= 10 && newWidth <= 90) setLeftColWidth(newWidth);
     }
-  }, 15); // Increased debounce delay to make dragging smoother
+  }, 15);
 
-  const handleMouseUp = () => {
-    setDragging(false);
-  };
-
+  const handleMouseUp = () => setDragging(false);
   const handleRightClick = (e) => {
-    if (dragging) {
-      setDragging(false); // Stop dragging if right-click occurs
-    }
+    if (dragging) setDragging(false);
   };
 
   useEffect(() => {
     if (dragging) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
-      window.addEventListener("contextmenu", handleRightClick); // Added to handle right-click
+      window.addEventListener("contextmenu", handleRightClick);
     } else {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
-      window.removeEventListener("contextmenu", handleRightClick); // Clean up event listener
+      window.removeEventListener("contextmenu", handleRightClick);
     }
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
-      window.removeEventListener("contextmenu", handleRightClick); // Clean up on unmount
+      window.removeEventListener("contextmenu", handleRightClick);
     };
   }, [dragging]);
 
-  const getSanitizedHTML = (htmlContent) => {
-    return { __html: DOMPurify.sanitize(htmlContent) };
-  };
+  const getSanitizedHTML = (htmlContent) => ({ __html: DOMPurify.sanitize(htmlContent) });
 
-  // Define dynamic styles for table based on the theme
   const tableStyles = {
     table: {
       width: "100%",
       borderCollapse: "collapse",
       backgroundColor: theme === "dark" ? "#2b2b38" : "#f8f9fa",
       color: theme === "dark" ? "white" : "black",
-      borderRadius: "8px", // Rounded corners for the table
-      overflow: "hidden", // Ensure content doesn't overflow outside the border
+      borderRadius: "8px",
+      overflow: "hidden",
     },
     th: {
       padding: "10px",
       backgroundColor: theme === "dark" ? "#3b3b4b" : "#e9ecef",
       color: theme === "light" ? "black" : "white",
-      textAlign: "left", // Align text to the left for a cleaner look
+      textAlign: "left",
     },
     td: {
       padding: "10px",
       backgroundColor: theme === "dark" ? "#2b2b38" : "#ffffff",
       color: theme === "dark" ? "white" : "black",
-      borderBottom: theme === "dark" ? "1px solid #444" : "1px solid #ddd", // Lighter borders for light mode
+      borderBottom: theme === "dark" ? "1px solid #444" : "1px solid #ddd",
     },
     tr: {
       borderBottom: theme === "dark" ? "1px solid #444" : "1px solid #ddd",
     },
     container: {
       padding: "20px",
-      backgroundColor: theme === "dark" ? "#343a40" : "#ffffff", // Background based on theme
+      backgroundColor: theme === "dark" ? "#343a40" : "#ffffff",
       borderRadius: "8px",
-      margin: "20px 0", // Add some margin around the container
+      margin: "20px 0",
     },
     heading: {
-      color: theme === "dark" ? "#f8f9fa" : "#343a40", // Adjust heading color for both themes
+      color: theme === "dark" ? "#f8f9fa" : "#343a40",
       marginBottom: "15px",
       fontSize: "1.25rem",
     },
   };
 
   return (
-    <div
-      style={{
-        backgroundColor: theme === "dark" ? "#343a40" : "#ffffff", // Background based on theme
+    <div style={{ backgroundColor: theme === "dark" ? "#343a40" : "#ffffff", display: "flex", height: "100vh", padding: 0 }}>
+      {/* Left Column */}
+      <div style={{
+        width: `${leftColWidth}%`,
+        height: "100%",
         display: "flex",
-        height: "100vh", // Parent container will fill the entire viewport height
-        margin: 0,
-        padding: 0,
-      }}
-    >
-      {/* Left Column for Question */}
-      <div
-        style={{
-          width: `${leftColWidth}%`, // Left column width is based on `leftColWidth`
-          height: "100%", // Ensure it fills the height of the parent container
-          overflowY: "auto", // Allow scrolling if content overflows
-          display: "flex",
-          flexDirection: "column", // Align the content in a column
-          justifyContent: "flex-start", // Align content to the top
-          alignItems: "stretch", // Stretch to fit content
-        }}
-      >
-        <div
-          className="d-flex flex-column"
-          style={{
-            width: "100%",
-            overflowY: "auto", // Allows scrolling if the content overflows
-          }}
-        >
-          <div
-            className="w-100"
-            style={{
-              backgroundColor: theme === "dark" ? "#343a40" : "#f8f9fa", // Set background color based on theme
-              color: theme === "dark" ? "#f8f9fa" : "#343a40", // Set text color based on theme
-              padding: "1rem",
-            }}
-          >
+        flexDirection: "column",
+      }}>
+        <div className="d-flex flex-column" style={{
+  width: "100%",
+  flex: 1, // Allow it to take the full remaining height
+  maxHeight: "100%", // Ensure it doesn’t exceed the available space
+  overflowY: "auto", // Enable scrolling when the content exceeds the max height
+}}>
+          <div style={{
+            backgroundColor: theme === "dark" ? "#343a40" : "#f8f9fa",
+            color: theme === "dark" ? "#f8f9fa" : "#343a40",
+            padding: "1rem",
+          }}>
+            {/* Video Solution */}
             {mode === "solution" && data.video && (
               <>
-                <h1>Video Solution :</h1>
-                <div
-                  className="flex justify-center items-center p-4"
-                  style={{
-                    display: "flex", // Ensure flex is applied
-                    justifyContent: "center", // Center the content horizontally
-                    alignItems: "center", // Center the content vertically
-                    padding: "20px", // Set padding around the content
-                  }}
-                >
-                  <ReactPlayer
-                    url={data.video}
-                    controls
-                    width="100%"
-                    height="360px"
-                  />
+                <h1>Video Solution:</h1>
+                <div style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  padding: "20px",
+                }}>
+                  {/* ReactPlayer for Video */}
+                  <ReactPlayer url={data.video} controls width="100%" height="360px" />
                 </div>
               </>
             )}
 
-            <div
-              dangerouslySetInnerHTML={
-                mode === "statement"
-                  ? getSanitizedHTML(data.question + "")
-                  : getSanitizedHTML(data.solution)
-              }
+            {/* Displaying Solution */}
+            {mode === "solution" && !data.video && !data.solution && (
+              <>
+                <Alert variant="info" className="my-4">
+            Solution will be available soon!
+          </Alert>
+          <div style={{ maxWidth: '100%', overflow: 'hidden', textAlign: 'center' }}>
+            <Image 
+              src={nosolution} 
+              alt="Coming soon" 
+              fluid 
+              style={{ maxWidth: '70%', height: 'auto' }} 
             />
+          </div>
+              </>
+            )}
 
+            {/* Question or Solution Display */}
+            <div dangerouslySetInnerHTML={mode === "statement" ? getSanitizedHTML(data.question + "") : getSanitizedHTML(data.solution)} />
+
+            {/* Sample Test Cases */}
             {mode === "statement" && (
               <div style={tableStyles.container}>
-                <h3 style={tableStyles.heading}>Sample Test Cases :</h3>
+                <h3 style={tableStyles.heading}>Sample Test Cases:</h3>
                 <table style={tableStyles.table}>
                   <thead>
                     <tr style={tableStyles.tr}>
@@ -202,25 +185,16 @@ function CodeWindow({ mode, data, lan }) {
       </div>
 
       {/* Resizable Divider */}
-      <div
-        style={{
-          width: "5px",
-          cursor: "ew-resize",
-          backgroundColor: "gray",
-          height: "100%", // Divider takes the full height of the container
-          zIndex: 1,
-        }}
-        onMouseDown={handleMouseDown}
-      ></div>
+      <div style={{ width: "5px", cursor: "ew-resize", backgroundColor: "gray", height: "100%", zIndex: 1 }} onMouseDown={handleMouseDown}></div>
 
-      {/* Right Column for CodeEditor */}
-      <div
-        style={{
-          width: `${100 - leftColWidth}%`, // Right column takes the remaining space
-          height: "100%", // Ensure it takes the full height of the parent container
-          overflowY: "auto", // Enable vertical scrolling if necessary
-        }}
-      >
+      {/* Right Column */}
+      <div style={{
+        width: `${100 - leftColWidth}%`,
+        height: "100%",
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column",
+      }}>
         <CodeEditor lan={lan} data={data} />
       </div>
     </div>
