@@ -95,7 +95,7 @@ const CategoryPage = () => {
       <ToastContainer/>
       {/* Navbar */}
       <div style={{ backgroundColor: "#343a40", color: "white", width: "100%" }}>
-        <MainNavbar />
+        <MainNavbar  command= {true} />
       </div>
 
 

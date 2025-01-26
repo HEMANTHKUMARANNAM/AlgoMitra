@@ -14,7 +14,11 @@ import lightmode from "../assets/lightmode.png";
 import darkmode from "../assets/darkmode.png";
 
 
-const MainNavbar = () => {
+import back_black from '../assets/back-black.png';
+import back_light from '../assets/back-white.png';
+
+
+const MainNavbar = ( {command} ) => {
   const { theme, toggleTheme } = useTheme(); // Access theme and toggleTheme from ThemeContext
   const { user } = useContext(AuthContext); // Access user from AuthContext
   const [photoURL, setPhotoURL] = useState(null);
@@ -40,6 +44,12 @@ const MainNavbar = () => {
     navigate("/dashboard"); // Redirect based on authentication status
   };
 
+  
+  function prevwindow() {
+    navigate(`/home`);
+  }
+
+
   // Dynamic classes based on theme
   const navbarBgClass = theme === "light" ? "bg-light" : "bg-dark";
   const navbarTextClass = theme === "light" ? "text-dark" : "text-light";
@@ -47,6 +57,18 @@ const MainNavbar = () => {
   return (
     <nav className={`navbar navbar-expand-lg ${navbarBgClass} ${navbarTextClass}`}>
       <div className="container-fluid">
+
+        { command===true ? ( <Image
+                  src={    theme === "light" ? back_black : back_light }
+                  alt="back"
+                  roundedCircle
+                  width={30}
+                  height={30}
+                  className="me-2"
+                  onClick={prevwindow}
+                />) : (<></>) }
+     
+       
       <Link to="/home">
         <img src= {icon} />
 

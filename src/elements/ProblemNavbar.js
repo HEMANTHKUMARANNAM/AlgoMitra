@@ -15,6 +15,10 @@ import { Image } from "react-bootstrap"; // Import Bootstrap Image component
 import lightmode from "../assets/lightmode.png";
 import darkmode from "../assets/darkmode.png";
 
+import back_black from '../assets/back-black.png';
+import back_light from '../assets/back-white.png';
+
+
 const ProblemNavbar = ({ toggleMode, activeMode, setlan, lan , nextQuestionUrl , prevQuestionUrl}) => {
   const { theme, toggleTheme } = useTheme(); // Access theme and toggle function
   const navigate = useNavigate(); // Hook for navigation
@@ -58,6 +62,10 @@ const ProblemNavbar = ({ toggleMode, activeMode, setlan, lan , nextQuestionUrl ,
     } else {
       navigate(`/category/${course}`);
     }
+  }
+
+  function prevwindow() {
+    navigate(`/category/${course}`);
   }
 
   // Fetch data and listen for changes in user status for current question
@@ -127,6 +135,18 @@ const ProblemNavbar = ({ toggleMode, activeMode, setlan, lan , nextQuestionUrl ,
     >
       <Container fluid>
         {/* Brand Name with Navigation */}
+
+        <Image
+                  src={    theme === "light" ? back_black : back_light }
+                  alt="back"
+                  roundedCircle
+                  width={30}
+                  height={30}
+                  className="me-2"
+                  onClick={prevwindow}
+                />
+       
+
         <Navbar.Brand
           className={theme === "light" ? "text-dark" : "text-light"}
           style={{ cursor: "pointer" }}
@@ -230,6 +250,10 @@ const ProblemNavbar = ({ toggleMode, activeMode, setlan, lan , nextQuestionUrl ,
             Next
           </Button>
         </div>
+
+        
+
+
       </Container>
     </Navbar>
   );

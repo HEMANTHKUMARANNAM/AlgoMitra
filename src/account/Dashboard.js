@@ -70,7 +70,7 @@ const AppNavbar = () => {
 
         {/* Upper div */}
         <div style={{ backgroundColor: currentTheme.backgroundColor ,  margin: 0, padding: 0 }}>
-          <MainNavbar />
+          <MainNavbar command={true} />
         </div>
 
         {/* Lower div */}
