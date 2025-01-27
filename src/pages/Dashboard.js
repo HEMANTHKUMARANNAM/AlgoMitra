@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useContext  } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useNavigate } from "react-router-dom";
 import { ref, get, child } from "firebase/database";
 import { database } from "../firebase"; // Firebase configuration
 import { useTheme } from "../ThemeContext";
+import { AuthContext } from "../utility/AuthContext";
 
 import dashboardimage from "../assets/dashboard.png";
 
@@ -15,12 +17,23 @@ const PeopleTable = () => {
   const [loading, setLoading] = useState(true);
   const { theme } = useTheme(); // Ensure the theme context is properly connected.
 
+    const { user, signInWithGoogle, logOut, isLoading } = useContext(AuthContext);
+
+  const navigate = useNavigate();
+
   useEffect(() => {
+
+    if (isLoading) return; // Wait until auth context is loaded
+
+    if (!user || user.email !== '99220041106@klu.ac.in') {
+      navigate("/home"); // Redirect if unauthorized
+      return;
+    }
     loadUsers();
     return () => {
       setUsersData([]);
     };
-  }, []);
+  }, [isLoading]);
 
   const loadUsers = async () => {
     setLoading(true);

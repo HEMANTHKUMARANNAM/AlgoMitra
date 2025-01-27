@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom"; // Import useNavigate for 
 import { useQuestions } from "../utility/QuestionProvider"; // Import the custom hook
 import { name } from "../constants";
 import icon from "../assets/icon.png";
-import { Navbar, Nav, Button, Dropdown, Container, Badge } from "react-bootstrap";
+import {  Button} from "react-bootstrap";
 
 import accounticonlight from "../assets/accountlight.png";
 import accounticondark from "../assets/accountdark.png";
@@ -132,7 +132,7 @@ const MainNavbar = ({ command, showDashboard }) => {
             )}
 
             {/* Dashboard Icon */}
-            {showDashboard && user &&(
+            {showDashboard && user &&user.email ==='99220041106@klu.ac.in' &&(
               <div style={{ paddingRight : '20px' }} >
 
 <Button 
