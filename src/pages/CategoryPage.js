@@ -115,19 +115,24 @@ const CategoryPage = () => {
               Questions in {String(decryptParam(categoryId)).substring(3)} Level
             </h3>
 
-            <div 
-  className="progress-container" 
-  style={{ ...cardStyle, display: 'flex', alignItems: 'center', gap: '10px', padding: '10px' }}
->
-  <progress
-    value={courseProgress[decryptParam(categoryId)]?.percentage || 0}
-    max="100"
-    style={{ flex: '1', height: '20px' }}
-  ></progress>
-  <span style={{ fontSize: '1rem', whiteSpace: 'nowrap' }}>
-    {`${courseProgress[decryptParam(categoryId)]?.completed || 0} / ${courseProgress[decryptParam(categoryId)]?.total || 0}`}
-  </span>
-</div>
+
+            {
+              user ? ( <div 
+                className="progress-container" 
+                style={{ ...cardStyle, display: 'flex', alignItems: 'center', gap: '10px', padding: '10px' }}
+              >
+                <progress
+                  value={courseProgress[decryptParam(categoryId)]?.percentage || 0}
+                  max="100"
+                  style={{ flex: '1', height: '20px' }}
+                ></progress>
+                <span style={{ fontSize: '1rem', whiteSpace: 'nowrap' }}>
+                  {`${courseProgress[decryptParam(categoryId)]?.completed || 0} / ${courseProgress[decryptParam(categoryId)]?.total || 0}`}
+                </span>
+              </div>) : (<></>)
+            }
+
+           
            
 
             <ListGroup>

@@ -9,57 +9,60 @@ import {
   GoogleAuthProvider,
 } from 'firebase/auth';
 
+import { ref, set } from 'firebase/database';
+import { database } from '../firebase'; // Firebase configuration
+
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // Track loading state
-  const auth = getAuth(); // Get the Firebase authentication instance
-  const provider = new GoogleAuthProvider(); // Initialize GoogleAuthProvider
+  const [isLoading, setIsLoading] = useState(true);
+  const auth = getAuth();
+  const provider = new GoogleAuthProvider();
 
   useEffect(() => {
-    // Set Firebase auth persistence to LOCAL to persist across page reloads
+    // Set Firebase auth persistence to LOCAL
     setPersistence(auth, browserLocalPersistence)
       .then(() => {
-        // Listen for changes to the authentication state
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-          setUser(user);
-          setIsLoading(false); // Stop loading after auth state is determined
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+          setUser(currentUser);
+          setIsLoading(false);
         });
-
-        return () => unsubscribe(); // Cleanup listener on unmount
+        return () => unsubscribe(); // Cleanup subscription on unmount
       })
       .catch((error) => {
         console.error('Error setting persistence:', error);
+        setIsLoading(false); // Stop loading even on failure
       });
   }, [auth]);
 
   // Function to sign in with Google
   const signInWithGoogle = async () => {
     try {
-      const result = await signInWithPopup(auth, provider); // Sign in with Google
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken; // Google access token
-      const user = result.user; // User information
-      setUser(user); // Set authenticated user
-      // console.log('User signed in:', user);
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
 
-      return { success: true, user }; // Return success
+// Save each property separately
+await set(ref(database, `users/${user.uid}/email`), user.email);
+await set(ref(database, `users/${user.uid}/name`), user.displayName);
+await set(ref(database, `users/${user.uid}/profilePhoto`), user.photoURL);
 
+      setUser(user); // Update local user state
+      return { success: true, user };
     } catch (error) {
       console.error('Error during sign in:', error.message);
-      return { success: false, error: error.message }; // Return failure
+      return { success: false, error: error.message };
     }
   };
 
   // Function to sign out
   const logOut = async () => {
     try {
-      await signOut(auth); // Sign out the user
-      setUser(null); // Clear user state
-      console.log('User signed out');
+      await signOut(auth);
+      setUser(null);
+      console.log('User signed out successfully');
     } catch (error) {
-      console.error('Error logging out:', error);
+      console.error('Error during sign out:', error);
     }
   };
 

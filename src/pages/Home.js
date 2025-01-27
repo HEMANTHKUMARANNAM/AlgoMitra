@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState , useContext} from "react";
 import { Link } from "react-router-dom";
 import { database } from "../firebase";
 import { ref, get } from "firebase/database";
@@ -7,6 +7,7 @@ import MainNavbar from "./MainNavbar";
 import { useTheme } from "../ThemeContext";
 import { Container, Card, Button } from "react-bootstrap";
 import LoadingScreen from "../LoadingScreen";
+import { AuthContext } from "../utility/AuthContext";
 
 // Import assets
 // import algorithms from "../assets/algorithms.png";
@@ -22,7 +23,10 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { theme } = useTheme();
-    const {courseProgress} = useQuestions();
+   const {courseProgress} = useQuestions();
+
+  const { user, loadinguser } = useContext(AuthContext);
+    
   
 
   useEffect(() => {
@@ -94,19 +98,21 @@ const Home = () => {
                         </Card.Title>
                         <Card.Text>
                           Explore problems in the <strong>{String(category).substring(3)} Level</strong> category.
-                                   <div 
-                            className="progress-container" 
-                            style={{ ...cardStyle, display: 'flex', alignItems: 'center', gap: '10px', padding: '10px' }}
-                          >
-                            <progress
-                              value={courseProgress[category]?.percentage || 0}
-                              max="100"
-                              style={{ flex: '1', height: '20px' }}
-                            ></progress>
-                            <span style={{ fontSize: '1rem', whiteSpace: 'nowrap' }}>
-                              {`${courseProgress[category]?.completed || 0} / ${courseProgress[category]?.total || 0}`}
-                            </span>
-                          </div>
+                              {
+                                user ? (<div 
+                                  className="progress-container" 
+                                  style={{ ...cardStyle, display: 'flex', alignItems: 'center', gap: '10px', padding: '10px' }}
+                                >
+                                  <progress
+                                    value={courseProgress[category]?.percentage || 0}
+                                    max="100"
+                                    style={{ flex: '1', height: '20px' }}
+                                  ></progress>
+                                  <span style={{ fontSize: '1rem', whiteSpace: 'nowrap' }}>
+                                    {`${courseProgress[category]?.completed || 0} / ${courseProgress[category]?.total || 0}`}
+                                  </span>
+                                </div>) : (<></>)
+                              }
                         </Card.Text>
                         <Link to={`/category/${encryptedCategory}`}>
                           <Button className={buttonClass}>View Category</Button>

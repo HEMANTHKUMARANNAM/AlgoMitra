@@ -3,9 +3,10 @@ import { useTheme } from "../ThemeContext"; // Import Theme Context
 import { AuthContext } from "../utility/AuthContext";
 import { Image } from "react-bootstrap"; // Import Bootstrap Image component
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate for navigation
-import { useQuestions } from '../utility/QuestionProvider';  // Import the custom hook
+import { useQuestions } from "../utility/QuestionProvider"; // Import the custom hook
 import { name } from "../constants";
-import icon from '../assets/icon.png';
+import icon from "../assets/icon.png";
+import { Navbar, Nav, Button, Dropdown, Container, Badge } from "react-bootstrap";
 
 import accounticonlight from "../assets/accountlight.png";
 import accounticondark from "../assets/accountdark.png";
@@ -13,19 +14,16 @@ import accounticondark from "../assets/accountdark.png";
 import lightmode from "../assets/lightmode.png";
 import darkmode from "../assets/darkmode.png";
 
+import back_black from "../assets/back-black.png";
+import back_light from "../assets/back-white.png";
 
-import back_black from '../assets/back-black.png';
-import back_light from '../assets/back-white.png';
 
-
-const MainNavbar = ( {command} ) => {
+const MainNavbar = ({ command, showDashboard }) => {
   const { theme, toggleTheme } = useTheme(); // Access theme and toggleTheme from ThemeContext
   const { user } = useContext(AuthContext); // Access user from AuthContext
   const [photoURL, setPhotoURL] = useState(null);
   const navigate = useNavigate(); // Initialize useNavigate for routing
-
-  const { overallProgress} = useQuestions(); // Get totalQuestions from the custom hook
-
+  const { overallProgress } = useQuestions(); // Get totalQuestions from the custom hook
 
   // Set photoURL when user is authenticated
   useEffect(() => {
@@ -34,21 +32,25 @@ const MainNavbar = ( {command} ) => {
     }
   }, [user]);
 
+  function handledashboardclick()
+  {
+    navigate("/dashboard");
+  }
+
   // Fallback handler when the profile photo fails to load
   const handleImageError = () => {
     setPhotoURL(null); // Use default icon if image fails to load
   };
 
-  // Navigate to login page
+  // Navigate to the profile page
   const handleProfileClick = () => {
     navigate("/profile"); // Redirect based on authentication status
   };
 
-  
-  function prevwindow() {
+  // Navigate back to home
+  const prevWindow = () => {
     navigate(`/home`);
-  }
-
+  };
 
   // Dynamic classes based on theme
   const navbarBgClass = theme === "light" ? "bg-light" : "bg-dark";
@@ -57,27 +59,38 @@ const MainNavbar = ( {command} ) => {
   return (
     <nav className={`navbar navbar-expand-lg ${navbarBgClass} ${navbarTextClass}`}>
       <div className="container-fluid">
+        {/* Back Button */}
+        {command && (
+          <Image
+            src={theme === "light" ? back_black : back_light}
+            alt="Back"
+            roundedCircle
+            width={30}
+            height={30}
+            className="me-2"
+            onClick={prevWindow}
+            style={{ cursor: "pointer" }}
+          />
+        )}
 
-        { command===true ? ( <Image
-                  src={    theme === "light" ? back_black : back_light }
-                  alt="back"
-                  roundedCircle
-                  width={30}
-                  height={30}
-                  className="me-2"
-                  onClick={prevwindow}
-                />) : (<></>) }
-     
-       
-      <Link to="/home">
-        <img src= {icon} />
-
+        {/* App Logo */}
+        <Link to="/home">
+          <Image src={icon} alt="App Icon" className="me-2" width={30} height={30} />
         </Link>
-        <Link to="/home" className="navbar-brand" style={{ color: theme === "light" ? "rgb(29, 30, 35)" : "#f8f9fa", textDecoration: "none" }}>
-  {name}
-</Link>
 
-        {/* Navbar Toggler for mobile view */}
+        {/* App Name */}
+        <Link
+          to="/home"
+          className="navbar-brand"
+          style={{
+            color: theme === "light" ? "rgb(29, 30, 35)" : "#f8f9fa",
+            textDecoration: "none",
+          }}
+        >
+          {name}
+        </Link>
+
+        {/* Navbar Toggler for Mobile View */}
         <button
           className="navbar-toggler"
           type="button"
@@ -90,27 +103,45 @@ const MainNavbar = ( {command} ) => {
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        
-
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          {/* Right-side navigation */}
+          {/* Right-Side Navigation */}
           <ul className="navbar-nav ms-auto align-items-center">
-
             {/* Progress Bar */}
-          <div className="ms-3 d-flex align-items-center">
-          
-          {overallProgress !== 0 && <progress value={overallProgress/100} />}
-          </div>
-          <div>
+            {overallProgress > 0 && (
+              <div className="ms-3 d-flex align-items-center">
+                <progress value={overallProgress} max={100} className="me-2" />
+              </div>
+            )}
 
-          </div>
+            {/* Dashboard Icon */}
+            {showDashboard && (
+              <div style={{ paddingRight : '20px' }} >
+
+<Button 
+  variant="primary" 
+  className="ms-3" 
+  style={{ 
+    backgroundColor: 'transparent', 
+    border: 'none', 
+    color: theme === "light" ? "black" : "white" 
+  }} 
+  onClick={handledashboardclick}
+>
+  Dashboard
+</Button>
+
+              </div>
+
+
+           
+            )}
+
             {/* User Profile or Default Login Icon */}
             <li
               className="nav-item d-flex align-items-center me-3"
               style={{ cursor: "pointer" }}
-              onClick={handleProfileClick} // Handle click to navigate
+              onClick={handleProfileClick}
             >
-              {/* Profile Picture or Default Icon */}
               {user && photoURL ? (
                 <Image
                   src={photoURL}
@@ -119,40 +150,34 @@ const MainNavbar = ( {command} ) => {
                   width={30}
                   height={30}
                   className="me-2"
-                  onError={handleImageError} // Handle fallback on image load error
+                  onError={handleImageError}
                 />
               ) : (
-                // <FaUser size={30} className="me-2" />
                 <Image
-                  src={theme === 'light' ? accounticondark : accounticonlight}
-                  alt="Profile"
+                  src={theme === "light" ? accounticondark : accounticonlight}
+                  alt="Default Profile"
                   roundedCircle
                   width={30}
                   height={30}
                   className="me-2"
-                  onError={handleImageError} // Handle fallback on image load error
                 />
               )}
               <span>{user ? user.displayName || "User" : "Login"}</span>
             </li>
 
-
-            
- 
             {/* Theme Toggle Button */}
             <li className="nav-item">
-            
-                <Image
-                  src={theme === 'light' ? darkmode : lightmode}
-                  alt="Profile"
-                  roundedCircle
-                  width={30}
-                  height={30}
-                  className="me-2"
-                  onError={handleImageError} // Handle fallback on image load error
-                  onClick={toggleTheme}
-                />
-            </li> 
+              <Image
+                src={theme === "light" ? darkmode : lightmode}
+                alt="Toggle Theme"
+                roundedCircle
+                width={30}
+                height={30}
+                className="me-2"
+                onClick={toggleTheme}
+                style={{ cursor: "pointer" }}
+              />
+            </li>
           </ul>
         </div>
       </div>

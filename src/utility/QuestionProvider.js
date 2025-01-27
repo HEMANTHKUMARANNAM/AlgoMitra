@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { AuthContext } from './AuthContext';  // Importing the AuthProvider's useAuth hook
-import { get, ref, onValue } from 'firebase/database';  // Firebase imports for Realtime Database
+import { get, ref, onValue ,set} from 'firebase/database';  // Firebase imports for Realtime Database
 import { database } from "../firebase";
 
 // Create a context to share the progress and completion data
@@ -37,6 +37,7 @@ const QuestionProvider = ({ children }) => {
       let totalQuestions = 0;
       const progressByCourse = {};
 
+
       // Calculate completion for each course
       for (const course in data.algomitra) {
         const questions = data.algomitra[course];
@@ -59,6 +60,16 @@ const QuestionProvider = ({ children }) => {
         totalCompleted += completedInCourse;
         totalQuestions += totalInCourse;
       }
+
+
+      // Save user data to Realtime Database
+      const userRef = ref(database, `users/${user.uid}/solved/`);
+
+      await set(userRef, totalCompleted); // Save user details as an object
+
+      const userRef2 = ref(database, `questions/`);
+
+      await set(userRef2, totalQuestions); // Save user details as an object
 
       // Calculate overall progress
       const overall = totalQuestions > 0 ? (totalCompleted / totalQuestions) * 100 : 0;

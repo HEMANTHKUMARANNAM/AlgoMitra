@@ -6,6 +6,8 @@ import ProtectedRoute from "./ProtectedRoute";
 
 import CategoryPage from './pages/CategoryPage';
 import Profile from './account/Profile';
+import Dashboard from './pages/Dashboard';
+
 
 
 function App() {
@@ -14,7 +16,10 @@ function App() {
       <Router basename='/Algo-Mitra/'>
         <Routes>
           {/* Public Routes: Accessible when the user is not authenticated */}
-          <Route path="/home" element={ <Home />} />
+          <Route path="/home" element={ <Home />} />\
+
+          <Route path="/dashboard" element={ <Dashboard/>} />
+
 
           <Route path="/category/:categoryId" element={<CategoryPage />} />
 

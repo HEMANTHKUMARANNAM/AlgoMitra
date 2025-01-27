@@ -70,7 +70,7 @@ const Profile = () => {
 
         {/* Upper div */}
         <div style={{ backgroundColor: currentTheme.backgroundColor ,  margin: 0, padding: 0 }}>
-          <MainNavbar command={true} />
+          <MainNavbar command={true} showDashboard= {true} />
         </div>
 
         {/* Lower div */}
