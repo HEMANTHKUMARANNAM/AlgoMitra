@@ -12,7 +12,11 @@ const QuestionProvider = ({ children }) => {
   const { user, loading } = useContext(AuthContext); // Access the user and loading state from AuthProvider
   const [courseProgress, setCourseProgress] = useState({});
   const [overallProgress, setOverallProgress] = useState(0);
+  const [overallQuestions, setOverallQuestions] = useState(0);
+  const [overallCompleted, setOverallCompleted] = useState(0);
     const [isLoading, setIsLoading] = useState(true); // Track loading state
+
+  
   
 
   // Fetch course progress and overall completion
@@ -59,6 +63,8 @@ const QuestionProvider = ({ children }) => {
 
         totalCompleted += completedInCourse;
         totalQuestions += totalInCourse;
+        setOverallQuestions(totalQuestions);
+        setOverallCompleted(totalCompleted);
       }
 
 
@@ -90,7 +96,7 @@ const QuestionProvider = ({ children }) => {
   }, [user, loading]);
 
   return (
-    <QuestionContext.Provider value={{ courseProgress, overallProgress , isLoading }}>
+    <QuestionContext.Provider value={{ courseProgress, overallProgress , overallQuestions ,  overallCompleted, isLoading }}>
       {children}
     </QuestionContext.Provider>
   );

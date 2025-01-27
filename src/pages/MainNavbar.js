@@ -23,7 +23,7 @@ const MainNavbar = ({ command, showDashboard }) => {
   const { user } = useContext(AuthContext); // Access user from AuthContext
   const [photoURL, setPhotoURL] = useState(null);
   const navigate = useNavigate(); // Initialize useNavigate for routing
-  const { overallProgress } = useQuestions(); // Get totalQuestions from the custom hook
+  const { overallProgress , overallQuestions ,  overallCompleted } = useQuestions(); // Get totalQuestions from the custom hook
 
   // Set photoURL when user is authenticated
   useEffect(() => {
@@ -108,13 +108,31 @@ const MainNavbar = ({ command, showDashboard }) => {
           <ul className="navbar-nav ms-auto align-items-center">
             {/* Progress Bar */}
             {overallProgress > 0 && (
-              <div className="ms-3 d-flex align-items-center">
+              <>
+              {/* <div className="ms-3 d-flex align-items-center">
                 <progress value={overallProgress} max={100} className="me-2" />
               </div>
+              <div className="ms-3 d-flex align-items-center" style={{paddingRight: "20px"}} >
+                { `${overallCompleted}/${overallQuestions}`}
+              </div> */}
+              <div 
+                                  className="progress-container" 
+                                  style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px' }}
+                                >
+                                  <progress
+                                    value={overallProgress|| 0}
+                                    max="100"
+                                    style={{ flex: '1', height: '20px' }}
+                                  ></progress>
+                                  <span style={{ fontSize: '1rem', whiteSpace: 'nowrap' }}>
+                                    {`${overallCompleted}/${overallQuestions}`}
+                                  </span>
+                                </div>
+              </>
             )}
 
             {/* Dashboard Icon */}
-            {showDashboard && (
+            {showDashboard && user &&(
               <div style={{ paddingRight : '20px' }} >
 
 <Button 

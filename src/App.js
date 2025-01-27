@@ -18,7 +18,7 @@ function App() {
           {/* Public Routes: Accessible when the user is not authenticated */}
           <Route path="/home" element={ <Home />} />\
 
-          <Route path="/dashboard" element={ <Dashboard/>} />
+          <Route path="/dashboard" element={  <ProtectedRoute>  <Dashboard/> </ProtectedRoute>} />
 
 
           <Route path="/category/:categoryId" element={<CategoryPage />} />
