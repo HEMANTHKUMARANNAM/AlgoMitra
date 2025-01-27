@@ -2,14 +2,14 @@
 export const LANGUAGE_VERSIONS = {
   python: "3.10.0",
   java: "15.0.2",
-  // c: "c"  // Ensure the version is correct for C
+  cpp: "10.2.0",  // You can specify the desired version here
   javascript: "18.15.0",
 };
 
 export const CODE_SNIPPETS = {
   python: `\ndef greet(name):\n\tprint("Hello, " + name + "!")\n\ngreet("Kumar")\n`,
   java: `\npublic class AlgoMitra {\n\tpublic static void main(String[] args) {\n\t\tSystem.out.println("AlgoMitra");\n\t}\n}\n`,
-  // c: `#include <stdio.h>\nint main() {\n\tprintf("Hello, World!\\n");\n\treturn 0;\n}\n`, // Added newline after printf for cleaner output and better format
+  cpp: `#include <iostream>\nusing namespace std;\n\nint main() {\n\tcout << "Algomitra!" << endl;\n\treturn 0;\n}\n`,
   javascript: `function sum(a, b) \n{\n\treturn a + b;\n}\nconsole.log(sum(3, 4));`,
 };
 
@@ -19,7 +19,7 @@ export const javasuggestions = [
   {
     label: "Scanner",
     // kind: monaco.languages.CompletionItemKind.Snippet,
-    insertText: "Scanner ${1:scanner} = new Scanner(System.in);",
+    insertText: "Scanner ${1:sc} = new Scanner(System.in);",
     // insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
     documentation: "Create a Scanner object for reading user input in Java.",
     additionalTextEdits: [

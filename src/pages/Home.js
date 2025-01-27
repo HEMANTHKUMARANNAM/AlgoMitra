@@ -57,7 +57,7 @@ const Home = () => {
   const categoryImages = {
     "001basic" : problems,
     "004sorting": datapoints2,
-    "005advanced" : datapoints1
+    "005intermediate" : datapoints1
   };
 
 

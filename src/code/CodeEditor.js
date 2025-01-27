@@ -104,37 +104,55 @@ const CodeEditor = ({ lan, data }) => {
       provideCompletionItems: () => {
   
 
-      const suggestions = [
-        ...javasuggestions.map(item => ({
-          label: item.label,
-          kind: monaco.languages.CompletionItemKind.Snippet,
-          insertText: item.insertText,
-          insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-          documentation: item.documentation,
-          additionalTextEdits: item.additionalTextEdits
+      // const suggestions = [
+      //   ...javasuggestions.map(item => ({
+      //     label: item.label,
+      //     kind: monaco.languages.CompletionItemKind.Snippet,
+      //     insertText: item.insertText,
+      //     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+      //     documentation: item.documentation,
+      //     additionalTextEdits: item.additionalTextEdits
           
-        }))
-      ];
+      //   }))
+      // ];
+
+      const uniqueSuggestions = Array.from(
+        new Map(
+          javasuggestions.map((item) => [
+            item.label, // Use the label as the unique key
+            {
+              label: item.label,
+              kind: monaco.languages.CompletionItemKind.Snippet,
+              insertText: item.insertText,
+              insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+              documentation: item.documentation,
+            },
+          ])
+        ).values()
+      );
   
         
         
-        return { suggestions };
+        // return { suggestions };
+
+         return { suggestions: uniqueSuggestions };
       },
     });
 
 
 
-   // Only trigger suggestions after typing the first letter
-   let isTypingStarted = false;
 
-   editor.onDidChangeModelContent(() => {
-     // Check if user has started typing (after the first letter)
-     if (!isTypingStarted && editor.getValue().length > 0) {
-       isTypingStarted = true;
-       editor.trigger('keyboard', 'editor.action.triggerSuggest', {});
-     }
-   });
+   
+  // Trigger suggestions only when the user types an alphabet
+  editor.onDidChangeModelContent(() => {
+    const value = editor.getValue();
+    const lastChar = value.slice(-1); // Get the last typed character
 
+    // Check if the last character is an alphabet (A-Z or a-z)
+    if (/^[a-zA-Z]$/.test(lastChar)) {
+      editor.trigger('keyboard', 'editor.action.triggerSuggest', {});
+    }
+  });
 
      // Ensure the editor is focused
      editor.focus();
