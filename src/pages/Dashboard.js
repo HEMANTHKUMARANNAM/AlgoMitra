@@ -129,7 +129,7 @@ const PeopleTable = () => {
                 <tr>
                   <th>Profile Photo</th>
                   <th>Name</th>
-                  <th>Email</th>
+                  {/* <th>Email</th> */}
                   <th>Progress</th>
                 </tr>
               </thead>
@@ -159,7 +159,7 @@ const PeopleTable = () => {
                         />
                       </td>
                       <td>{user.name}</td>
-                      <td>{user.email}</td>
+                      {/* <td>{user.email}</td> */}
                       <td>{user.progress}</td>
                     </tr>
                   ))
