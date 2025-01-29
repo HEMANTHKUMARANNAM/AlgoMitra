@@ -69,7 +69,7 @@ const Home = () => {
   return (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
       <div style={{ backgroundColor: "#343a40", color: "white", width: "100%" }}>
-        <MainNavbar command= {false} />
+        <MainNavbar command= {false} showDashboard= {true}  />
       </div>
 
       {/* Scrollable content */}

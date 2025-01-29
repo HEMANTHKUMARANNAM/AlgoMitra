@@ -132,7 +132,7 @@ const MainNavbar = ({ command, showDashboard }) => {
             )}
 
             {/* Dashboard Icon */}
-            {showDashboard && user &&user.email ==='99220041106@klu.ac.in' &&(
+            {showDashboard && user  &&(
               <div style={{ paddingRight : '20px' }} >
 
 <Button 

@@ -25,7 +25,7 @@ const PeopleTable = () => {
 
     if (isLoading) return; // Wait until auth context is loaded
 
-    if (!user || user.email !== '99220041106@klu.ac.in') {
+    if (!user) {
       navigate("/home"); // Redirect if unauthorized
       return;
     }
