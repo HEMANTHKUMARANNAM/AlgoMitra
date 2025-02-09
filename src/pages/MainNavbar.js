@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom"; // Import useNavigate for 
 import { useQuestions } from "../utility/QuestionProvider"; // Import the custom hook
 import { name } from "../constants";
 import icon from "../assets/icon.png";
-import {  Button} from "react-bootstrap";
+import { Button} from "react-bootstrap";
 
 import accounticonlight from "../assets/accountlight.png";
 import accounticondark from "../assets/accountdark.png";
@@ -17,13 +17,16 @@ import darkmode from "../assets/darkmode.png";
 import back_black from "../assets/back-black.png";
 import back_light from "../assets/back-white.png";
 
+import exam_black from "../assets/exam_dark.png";
+import exam_light from "../assets/exam_light.png";
+
 
 const MainNavbar = ({ command, showDashboard }) => {
   const { theme, toggleTheme } = useTheme(); // Access theme and toggleTheme from ThemeContext
   const { user } = useContext(AuthContext); // Access user from AuthContext
   const [photoURL, setPhotoURL] = useState(null);
   const navigate = useNavigate(); // Initialize useNavigate for routing
-  const { overallProgress , overallQuestions ,  overallCompleted } = useQuestions(); // Get totalQuestions from the custom hook
+  const { overallProgress, overallQuestions, overallCompleted } = useQuestions(); // Get totalQuestions from the custom hook
 
   // Set photoURL when user is authenticated
   useEffect(() => {
@@ -32,8 +35,7 @@ const MainNavbar = ({ command, showDashboard }) => {
     }
   }, [user]);
 
-  function handledashboardclick()
-  {
+  function handledashboardclick() {
     navigate("/dashboard");
   }
 
@@ -109,50 +111,66 @@ const MainNavbar = ({ command, showDashboard }) => {
             {/* Progress Bar */}
             {overallProgress > 0 && (
               <>
-              {/* <div className="ms-3 d-flex align-items-center">
+                {/* <div className="ms-3 d-flex align-items-center">
                 <progress value={overallProgress} max={100} className="me-2" />
               </div>
               <div className="ms-3 d-flex align-items-center" style={{paddingRight: "20px"}} >
                 { `${overallCompleted}/${overallQuestions}`}
               </div> */}
-              <div 
-                                  className="progress-container" 
-                                  style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px' }}
-                                >
-                                  <progress
-                                    value={overallProgress|| 0}
-                                    max="100"
-                                    style={{ flex: '1', height: '20px' }}
-                                  ></progress>
-                                  <span style={{ fontSize: '1rem', whiteSpace: 'nowrap' }}>
-                                    {`${overallCompleted}/${overallQuestions}`}
-                                  </span>
-                                </div>
+                <div
+                  className="progress-container"
+                  style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px' }}
+                >
+                  <progress
+                    value={overallProgress || 0}
+                    max="100"
+                    style={{ flex: '1', height: '20px' }}
+                  ></progress>
+                  <span style={{ fontSize: '1rem', whiteSpace: 'nowrap' }}>
+                    {`${overallCompleted}/${overallQuestions}`}
+                  </span>
+                </div>
               </>
             )}
 
             {/* Dashboard Icon */}
-            {showDashboard && user  &&(
-              <div style={{ paddingRight : '20px' }} >
+            {showDashboard && user && (
+              <div style={{ paddingRight: '20px' }} >
 
-<Button 
-  variant="primary" 
-  className="ms-3" 
-  style={{ 
-    backgroundColor: 'transparent', 
-    border: 'none', 
-    color: theme === "light" ? "black" : "white" 
-  }} 
-  onClick={handledashboardclick}
->
-  Dashboard
-</Button>
+                <Button
+                  variant="primary"
+                  className="ms-3"
+                  style={{
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    color: theme === "light" ? "black" : "white"
+                  }}
+                  onClick={handledashboardclick}
+                >
+                  Dashboard
+                </Button>
 
               </div>
 
 
-           
+
             )}
+
+{user && (
+  <Image
+    src={theme === "light" ? exam_black : exam_light}
+    alt="Back"
+    roundedCircle
+    width={30}
+    height={30}
+    className="me-2"
+    onClick={() => navigate("/tests")} // Corrected onClick
+    style={{ cursor: "pointer", marginRight: "30px" }}
+  />
+)}
+
+
+
 
             {/* User Profile or Default Login Icon */}
             <li
