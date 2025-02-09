@@ -30,7 +30,7 @@ export default function TestPage() {
         const userId = user.uid;
         const userRef = ref(database, `exams/${testid}/${userId}/exitCount`);
         const examRef = ref(database, `exams/${testid}/user_exam`);
-        const scoreRef = ref(database, `exam/results/${userId}/${testid}/`);
+        const scoreRef = ref(database, `exams/results/${userId}/${testid}/`);
         const testRef = ref(database, `tests/${testid}/`);
 
         const exitSnapshot = await get(userRef);

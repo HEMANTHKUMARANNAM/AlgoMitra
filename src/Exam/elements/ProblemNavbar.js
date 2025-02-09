@@ -30,7 +30,7 @@ const ProblemNavbar = ({ setlan, lan, onNext, onPrev, timeLeft, data, toggleSide
   useEffect(() => {
     if (loading || !user?.uid || !testid || !data?.questionname) return;
 
-    const resultRef = ref(database, `exam/results/${user.uid}/${testid}/${data.questionname}`);
+    const resultRef = ref(database, `exams/results/${user.uid}/${testid}/${data.questionname}`);
     const listener = onValue(resultRef, (snapshot) => {
       if (snapshot.exists()) {
         const resultData = snapshot.val();

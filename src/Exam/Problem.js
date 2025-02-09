@@ -56,7 +56,7 @@ function Problem({ data, timeLeft }) {
     questionsArray.forEach((question, index) => {
       console.log(question.toString());
       const questionName = question[1].questionname;
-      const resultRef = ref(database, `exam/results/${user.uid}/${testid}/${questionName}`);
+      const resultRef = ref(database, `exams/results/${user.uid}/${testid}/${questionName}`);
 
       listeners[questionName] = onValue(resultRef, (snapshot) => {
         setQuestionStatuses((prev) => ({

@@ -24,7 +24,7 @@ const CodeEditor = ({ lan, data }) => {
   useEffect(() => {
     if (!user?.uid || !data.questionname) return;
 
-    const dbRef = ref(database, `/exam/savedCode/${user.uid}/${testid}/${data.questionname}/${lan}`);
+    const dbRef = ref(database, `/exams/savedCode/${user.uid}/${testid}/${data.questionname}/${lan}`);
     
     const unsubscribe = onValue(dbRef, (snapshot) => {
       setValue(snapshot.exists() ? snapshot.val() : CODE_SNIPPETS[lan] || "");
@@ -45,7 +45,7 @@ const CodeEditor = ({ lan, data }) => {
 
   const saveCode = useCallback(async (code) => {
     if (!user?.uid || !data.questionname) return;
-    const dbRef = ref(database, `/exam/savedCode/${user.uid}/${testid}/${data.questionname}/${lan}`);
+    const dbRef = ref(database, `/exams/savedCode/${user.uid}/${testid}/${data.questionname}/${lan}`);
     try {
       await set(dbRef, code);
       console.log("Code auto-saved successfully!");
