@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { database } from "../firebase"; // Firebase config
 import { ref, set, get } from "firebase/database";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useParams } from "react-router-dom";
 import Problem from "./Problem";
+import { AuthContext } from "../utility/AuthContext";
 
 const EXAM_DURATION = 1800; // 20 seconds for testing
 const Exam = () => {
@@ -12,10 +13,11 @@ const Exam = () => {
   const [examStarted, setExamStarted] = useState(false);
   const [loading, setLoading] = useState(true);
   const { testid } = useParams();
+  const {user} = useContext(AuthContext);
 
   useEffect(() => {
     const startExamAutomatically = async () => {
-      const examRef = ref(database, `exams/${testid}/user_exam`);
+      const examRef = ref(database, `exams/${testid}/${user.uid}`);
       const snapshot = await get(examRef);
       const data = snapshot.val();
       const currentTime = Math.floor(Date.now() / 1000);

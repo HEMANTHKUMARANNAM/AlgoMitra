@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, useCallback, useContext } from "react";
-import { Editor , loader} from "@monaco-editor/react";
-import { CODE_SNIPPETS , javasuggestions } from "../constants";
+import { Editor, loader } from "@monaco-editor/react";
+import { CODE_SNIPPETS, javasuggestions } from "../constants";
 import Output from "./Output";
 import { useTheme } from "../ThemeContext"; // Import Theme Context
 import { decryptParam } from "../cryptoUtils";
@@ -9,7 +9,7 @@ import { ref, set, get, child } from "firebase/database";
 import { database } from "../firebase"; // Firebase configuration
 import { AuthContext } from '../utility/AuthContext'; // Import AuthProvider
 import * as monaco from "monaco-editor";
-import {  toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 
 const CodeEditor = ({ lan, data }) => {
@@ -18,7 +18,7 @@ const CodeEditor = ({ lan, data }) => {
   const [language, setLanguage] = useState(lan); // Set language from props initially
   const { theme } = useTheme(); // Access the theme from ThemeContext
   const saveTimeoutRef = useRef(null); // Reference to track the debounce timer
-  const {  questionId } = useParams();
+  const { questionId } = useParams();
   const { user } = useContext(AuthContext);  // Get the current user from AuthContext
 
   // Decrypt URL parameters
@@ -69,16 +69,14 @@ const CodeEditor = ({ lan, data }) => {
   const handleEditorDidMount = (editor, monaco) => {
     editorRef.current = editor;
 
-      // Disable Copy (Ctrl + C)
-      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyC, () => {
-        toast.error("Copy disabled!", {
-                  position: "top-right",
-                  autoClose: 3000,
-                });
+    // Disable Copy (Ctrl + C)
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyC, () => {
+      toast.error("Copy disabled!", {
+        position: "top-right",
+        autoClose: 3000,
       });
+    });
 
-
-        
     // Disable Paste (Ctrl + V)
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV, () => {
       toast.error("Paste disabled!", {
@@ -87,84 +85,108 @@ const CodeEditor = ({ lan, data }) => {
       });
     });
 
-       editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Insert, () => {
+    editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Insert, () => {
       toast.error("Shift insert disabled!😭", {
         position: "top-right",
         autoClose: 3000,
       });
 
-  
-    });
-  
 
-    
+    });
 
     // Register custom auto-suggestions for JavaScript
     monaco.languages.registerCompletionItemProvider("java", {
       provideCompletionItems: () => {
-  
 
-      // const suggestions = [
-      //   ...javasuggestions.map(item => ({
-      //     label: item.label,
-      //     kind: monaco.languages.CompletionItemKind.Snippet,
-      //     insertText: item.insertText,
-      //     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-      //     documentation: item.documentation,
-      //     additionalTextEdits: item.additionalTextEdits
-          
-      //   }))
-      // ];
 
-      const uniqueSuggestions = Array.from(
-        new Map(
-          javasuggestions.map((item) => [
-            item.label, // Use the label as the unique key
-            {
-              label: item.label,
-              kind: monaco.languages.CompletionItemKind.Snippet,
-              insertText: item.insertText,
-              insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-              documentation: item.documentation,
-            },
-          ])
-        ).values()
-      );
-  
-        
-        
+        const uniqueSuggestions = Array.from(
+          new Map(
+            javasuggestions.map((item) => [
+              item.label, // Use the label as the unique key
+              {
+                label: item.label,
+                kind: monaco.languages.CompletionItemKind.Snippet,
+                insertText: item.insertText,
+                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                documentation: item.documentation,
+              },
+            ])
+          ).values()
+        );
+
+
+
         // return { suggestions };
 
-         return { suggestions: uniqueSuggestions };
+        return { suggestions: uniqueSuggestions };
       },
     });
 
+    // 🚫 2. Remove Paste from Right-Click Menu
+    editor.updateOptions({
+      contextmenu: false, // Disables right-click menu
+    });
+
+    // 🚫 3. Block Clipboard Events (Prevents extensions & force-paste)
+    const blockPaste = (event) => {
+      event.preventDefault();
+      alert("Pasting is completely disabled!");
+    };
+
+     // 🚫 5. Detect & Block Developer Tools (Prevents bypassing restrictions)
+     const detectDevTools = () => {
+      if (window.outerWidth - window.innerWidth > 100 || window.outerHeight - window.innerHeight > 100) {
+        alert("Developer Tools Detected! Paste is blocked.");
+        window.location.reload();
+      }
+    };
 
 
+    document.addEventListener("paste", blockPaste);
 
-   
-  // Trigger suggestions only when the user types an alphabet
-  editor.onDidChangeModelContent(() => {
-    const value = editor.getValue();
-    const lastChar = value.slice(-1); // Get the last typed character
-
-    // Check if the last character is an alphabet (A-Z or a-z)
-    if (/^[a-zA-Z]$/.test(lastChar)) {
-      editor.trigger('keyboard', 'editor.action.triggerSuggest', {});
-    }
-  });
-
-     // Ensure the editor is focused
-     editor.focus();
+       // 🚫 4. Override Clipboard API (Stops extensions)
+       navigator.clipboard.writeText = () => {
+        alert("Clipboard access is blocked!");
+        return Promise.reject("Clipboard write blocked");
+      };
   
+      navigator.clipboard.readText = () => {
+        alert("Clipboard reading is blocked!");
+        return Promise.reject("Clipboard read blocked");
+      };
+
+
+
+
+
+    // Trigger suggestions only when the user types an alphabet
+    editor.onDidChangeModelContent(() => {
+      const value = editor.getValue();
+      const lastChar = value.slice(-1); // Get the last typed character
+
+      // Check if the last character is an alphabet (A-Z or a-z)
+      if (/^[a-zA-Z]$/.test(lastChar)) {
+        editor.trigger('keyboard', 'editor.action.triggerSuggest', {});
+      }
+    });
+
+    // Ensure the editor is focused
+    editor.focus();
+     // Cleanup function when component unmounts
+     return () => {
+      editor.dispose();
+      document.removeEventListener("paste", blockPaste);
+      window.removeEventListener("resize", detectDevTools);
+    };
+
   };
 
- 
-  
 
-  
 
-  
+
+
+
+
 
   useEffect(() => {
     setLanguage(lan); // Set language based on the prop
@@ -172,13 +194,13 @@ const CodeEditor = ({ lan, data }) => {
   }, [lan, user?.uid, decryptedQuestionId]); // Effect depends on lan and user
 
 
-  
 
 
- 
 
-  
-  
+
+
+
+
 
   return (
     <div
@@ -186,9 +208,9 @@ const CodeEditor = ({ lan, data }) => {
       style={{ border: "1px solid #ddd", height: "100%" }} // Full viewport height for the container
     >
       {/* Scrollable Area */}
-      <div 
-        className="flex-grow-1 overflow-auto p-3" 
-        style={{ 
+      <div
+        className="flex-grow-1 overflow-auto p-3"
+        style={{
           backgroundColor: theme === "light" ? "#ffffff" : "#1e1e1e", // Adjust background color based on theme
           color: theme === "light" ? "#000" : "#fff", // Adjust text color
           height: "calc(100vh - 15vh)", // Adjusted height for a more compact editor + output area
@@ -201,7 +223,7 @@ const CodeEditor = ({ lan, data }) => {
           language={language}
           defaultValue={CODE_SNIPPETS[language]}
           theme={editorTheme} // Use dynamic theme
-          onMount={handleEditorDidMount }
+          onMount={handleEditorDidMount}
 
           value={value}
           options={{
@@ -213,7 +235,7 @@ const CodeEditor = ({ lan, data }) => {
 
           }}
           onChange={handleCodeChange}
-          
+
         />
 
         <br></br>

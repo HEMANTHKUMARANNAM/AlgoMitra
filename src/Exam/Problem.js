@@ -10,7 +10,7 @@ import { AuthContext } from "../utility/AuthContext";
 
 import menu_light from "../assets/menu_light.png";
 import menu_dark from "../assets/menu_dark.png";
-import { ref, onValue, off } from "firebase/database";
+import { ref, onValue, set } from "firebase/database";
 import { database } from "../firebase";
 
 
@@ -22,6 +22,8 @@ function Problem({ data, timeLeft }) {
   const [questionStatuses, setQuestionStatuses] = useState({});
     const { testid } = useParams();
       const { user, loading } = useContext(AuthContext);
+
+  const [ loading_f , setloading ] = useState(false);
     
 
   const questionsArray = data ? Object.entries(data) : [];
@@ -80,9 +82,37 @@ function Problem({ data, timeLeft }) {
     }
   };
 
+  
+const handleFinishClick = () => {
+  const finishRef = ref(database, `exams/results/${testid}/${user.uid}/finish`);
+  
+  // Store true in Firebase
+  set(finishRef, true);
+
+  // Set loading state to true
+  setloading(true);
+
+  // Wait for 2 seconds before setting loading to false and exiting full screen
+  setTimeout(() => {
+    setloading(false);
+
+    // Exit full screen if active
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    }
+  }, 2000);
+};
+
   const handleIndexClick = (index) => {
     setCurrentIndex(index);
   };
+
+  if( loading_f)
+  {
+    return(
+      <LoadingScreen/>
+    );
+  }
 
   return (
     <div className="d-flex">
@@ -144,8 +174,7 @@ function Problem({ data, timeLeft }) {
       opacity: 0.8,
       transition: "all 0.3s ease-in-out",
     }}
-    // onClick={handleFinishClick}
-
+    onClick={handleFinishClick}
   >
     finish
   </Button>

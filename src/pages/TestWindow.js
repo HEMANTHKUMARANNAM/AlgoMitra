@@ -17,9 +17,11 @@ export default function TestPage() {
   const [testEnded, setTestEnded] = useState(false);
   const [startedBefore, setStartedBefore] = useState(false);
   const [examLoading, setExamLoading] = useState(true);
-  const [userScore, setUserScore] = useState(null);
+  const [userScore, setUserScore] = useState(0);
 
-  const { user, loading: authLoading } = useContext(AuthContext);
+  const [finish, finishstatus] = useState(false);
+
+  const { user, loading } = useContext(AuthContext);
   const { testid } = useParams();
 
   useEffect(() => {
@@ -29,12 +31,16 @@ export default function TestPage() {
       try {
         const userId = user.uid;
         const userRef = ref(database, `exams/${testid}/${userId}/exitCount`);
-        const examRef = ref(database, `exams/${testid}/user_exam`);
+        const examRef = ref(database, `exams/${testid}/${userId}`);
         const scoreRef = ref(database, `exams/results/${userId}/${testid}/`);
+        const finishRef = ref(database, `exams/results/${testid}/${userId}/finish`);
         const testRef = ref(database, `tests/${testid}/`);
 
         const exitSnapshot = await get(userRef);
         if (exitSnapshot.exists()) setExitCount(exitSnapshot.val() || 0);
+
+        const finishSnapshot = await get(finishRef);
+        if (finishSnapshot.exists()) finishstatus(finishSnapshot.val() || false);
 
         const examSnapshot = await get(examRef);
         if (examSnapshot.exists()) {
@@ -64,24 +70,9 @@ export default function TestPage() {
     };
 
     fetchExamData();
-  }, [user, testid]);
+  }, [user, testid, exitCount , finish , ]);
 
-  // useEffect(() => {
-  //   const handleFullscreenChange = () => {
-  //     setIsFullscreen(!!document.fullscreenElement);
-  //     if (!document.fullscreenElement && hasEnteredFullscreen) updateExitCount();
-  //   };
-
-  //   document.addEventListener("fullscreenchange", handleFullscreenChange);
-  //   return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
-  // }, [hasEnteredFullscreen]);
-
-  // const updateExitCount = async () => {
-  //   if (!user) return;
-  //   const newCount = exitCount + 1;
-  //   setExitCount(newCount);
-  //   await set(ref(database, `exams/${testid}/${user.uid}/exitCount`), newCount);
-  // };
+ 
 
   useEffect(() => {
     const handleFullscreenChange = async () => {
@@ -111,58 +102,15 @@ export default function TestPage() {
   }, [exitCount, hasEnteredFullscreen]);
 
   const updateExitCount = async () => {
+    if (!user) return;
     const newCount = exitCount + 1;
     setExitCount(newCount);
-    await set(ref(database, `exams/${testid}/${user.userId}/exitCount`), newCount);
+    await set(ref(database, `exams/${testid}/${user.uid}/exitCount`), newCount);
   };
 
 
 
-  // useEffect(() => {
-  //   const handleViolation = () => {
-  //     if (hasEnteredFullscreen) {
-  //       updateExitCount();
-  //     }
-  //   };
 
-  //   const handleFullscreenChange = () => {
-  //     setIsFullscreen(!!document.fullscreenElement);
-  //     if (!document.fullscreenElement) {
-  //       handleViolation();
-  //     }
-  //   };
-
-  //   const handleVisibilityChange = () => {
-  //     if (document.hidden) {
-  //       handleViolation();
-  //     }
-  //   };
-
-  //   const handleBlur = () => {
-  //     handleViolation();
-  //   };
-
-  //   window.addEventListener("fullscreenchange", handleFullscreenChange);
-  //   document.addEventListener("visibilitychange", handleVisibilityChange);
-  //   window.addEventListener("blur", handleBlur);
-
-  //   return () => {
-  //     window.removeEventListener("fullscreenchange", handleFullscreenChange);
-  //     document.removeEventListener("visibilitychange", handleVisibilityChange);
-  //     window.removeEventListener("blur", handleBlur);
-  //   };
-  // }, [hasEnteredFullscreen]);
-
-  // const updateExitCount = async () => {
-  //   if (!user) return;
-  //   const newCount = exitCount + 1;
-  //   setExitCount(newCount);
-  //   await set(ref(database, `exams/${testid}/${user.uid}/exitCount`), newCount);
-  // };
-
-  // const enterFullscreen = () => {
-  //   document.documentElement.requestFullscreen().then(() => setHasEnteredFullscreen(true));
-  // };
 
   const enterFullscreen = () => {
     document.documentElement.requestFullscreen().then(() => {
@@ -170,7 +118,7 @@ export default function TestPage() {
     });
   };
 
-  if (examLoading || authLoading) {
+  if (examLoading || loading) {
     return (
       <div className="d-flex align-items-center justify-content-center vh-100 bg-light">
         <div className="spinner-border text-primary" role="status">
@@ -189,7 +137,7 @@ export default function TestPage() {
       )}
 
       <div className="flex-grow-1 bg-light d-flex align-items-center justify-content-center">
-        {testEnded ? (
+        {testEnded || finish ? (
           <div className="p-4 bg-dark text-white rounded shadow-lg text-center">
             <h2>Test Ended</h2>
             <p>The exam has finished. Thank you for participating.</p>
@@ -206,16 +154,29 @@ export default function TestPage() {
         ) : isFullscreen ? (
           <Exam />
         ) : (
-          <div className="p-5 bg-warning text-dark text-center rounded shadow-lg">
-            <FaExclamationTriangle size={50} className="mb-3" />
-            <h4>Fullscreen Required</h4>
-            <h4>{testid}</h4>
-            <p>You must stay in fullscreen mode during the exam.</p>
-            <p>Violations: {exitCount} / 3</p>
+    
+
+          <div className="p-5 bg-light text-dark text-left rounded shadow-lg w-100">
+            <div className="card shadow-lg w-100">
+              <div className="card-header bg-primary text-white text-left">
+                <h2>Exam Instructions</h2>
+              </div>
+              <div className="card-body">
+                <p><strong>Instructions:</strong></p>
+                <ul>
+                  <li>Stay in fullscreen mode throughout the exam.</li>
+                  <li>Multiple-choice, short-answer, and coding questions included.</li>
+                  <li>Do not navigate away or refresh the page.</li>
+                  <li>Ensure a stable internet connection.</li>
+                  <li>Submit your answers before time runs out.</li>
+                </ul>
+              </div>
+            </div>
             <button onClick={enterFullscreen} className="btn btn-primary mt-3">
               <FaExpandArrowsAlt className="me-2" /> {startedBefore ? "Resume Exam" : "Start Exam"}
             </button>
           </div>
+          
         )}
       </div>
     </div>
