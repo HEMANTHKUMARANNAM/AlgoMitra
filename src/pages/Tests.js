@@ -86,7 +86,7 @@ const Tests = () => {
                       <Card.Img variant="top" src={imageUrl} alt={category}  />
                       <Card.Body>
                         <Card.Title className="text-capitalize">
-                          {index + 1}. {String(category).substring(3)}
+                          {String(category)}
                         </Card.Title>
                         <Card.Text>
                           {/* Explore problems in the <strong>{String(category).substring(3)} Level</strong> category. */}

@@ -7,6 +7,10 @@ import { useParams } from "react-router-dom";
 import { AuthContext } from "../utility/AuthContext";
 import { FaExclamationTriangle, FaLock, FaExpandArrowsAlt } from "react-icons/fa";
 import MainNavbar from "./MainNavbar";
+import { Image } from "react-bootstrap";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const EXAM_DURATION = 1800; // 1 hour in seconds
 
@@ -70,9 +74,9 @@ export default function TestPage() {
     };
 
     fetchExamData();
-  }, [user, testid, exitCount , finish , ]);
+  }, [user, testid, exitCount, finish,]);
 
- 
+
 
   useEffect(() => {
     const handleFullscreenChange = async () => {
@@ -104,6 +108,22 @@ export default function TestPage() {
   const updateExitCount = async () => {
     if (!user) return;
     const newCount = exitCount + 1;
+    if(newCount <3)
+    {
+      toast.error(`Violations : ${newCount}/{3}`, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
+    else{
+
+      toast.error(`Blocked`, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+
+    }
+    
     setExitCount(newCount);
     await set(ref(database, `exams/${testid}/${user.uid}/exitCount`), newCount);
   };
@@ -139,7 +159,7 @@ export default function TestPage() {
       <div className="flex-grow-1 bg-light d-flex align-items-center justify-content-center">
         {testEnded || finish ? (
           <div className="p-4 bg-dark text-white rounded shadow-lg text-center">
-            <h2>Test Ended</h2>
+            <h2>{testid} Test Ended</h2>
             <p>The exam has finished. Thank you for participating.</p>
             {userScore !== null && <p className="fw-bold">Your Score: {userScore}%</p>}
           </div>
@@ -148,19 +168,24 @@ export default function TestPage() {
             <FaLock size={50} className="mb-3" />
             <h3>Exam Blocked</h3>
             <h3>{testid}</h3>
-            
+
             <p>You have exceeded the allowed number of violations.</p>
           </div>
         ) : isFullscreen ? (
           <Exam />
         ) : (
-    
+
 
           <div className="p-5 bg-light text-dark text-left rounded shadow-lg w-100">
+            <h3 className="text-center">{testid}</h3>
             <div className="card shadow-lg w-100">
-              <div className="card-header bg-primary text-white text-left">
-                <h2>Exam Instructions</h2>
+
+              <div className="card-header bg-primary text-white d-flex justify-content-between">
+                <h2 className="mb-0">Exam Instructions</h2>
+                <span><Image src={user.profileurl} ></Image></span>
+                <span className="ml-auto">{user.displayName}</span>
               </div>
+
               <div className="card-body">
                 <p><strong>Instructions:</strong></p>
                 <ul>
@@ -176,9 +201,10 @@ export default function TestPage() {
               <FaExpandArrowsAlt className="me-2" /> {startedBefore ? "Resume Exam" : "Start Exam"}
             </button>
           </div>
-          
+
         )}
       </div>
+      <ToastContainer />
     </div>
   );
 }

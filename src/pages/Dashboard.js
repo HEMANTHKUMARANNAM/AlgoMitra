@@ -6,6 +6,9 @@ import { database } from "../firebase"; // Firebase configuration
 import { useTheme } from "../ThemeContext";
 import { AuthContext } from "../utility/AuthContext";
 
+import accountlight from "../assets/accountlight.png";
+import accountdark from "../assets/accountdark.png";
+
 import dashboardimage from "../assets/dashboard.png";
 
 import MainNavbar from "./MainNavbar";
@@ -164,7 +167,7 @@ const PeopleTable = () => {
                     <tr key={index}>
                       <td>
                         <img
-                          src={user.profilePhoto || "default-avatar.png"}
+                          src={user.profilePhoto || theme === "light" ? accountdark : accountlight }
                           alt="Profile"
                           width="50"
                           height="50"
