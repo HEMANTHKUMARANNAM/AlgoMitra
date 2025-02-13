@@ -11,7 +11,8 @@ import { Image } from "react-bootstrap";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Modal  , Button} from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
+import LoadingScreen from "../LoadingScreen";
 
 const EXAM_DURATION = 1800; // 1 hour in seconds
 
@@ -26,7 +27,7 @@ export default function TestPage() {
   const [examLoading, setExamLoading] = useState(true);
   const [userScore, setUserScore] = useState(0);
   const [showModal, setShowModal] = useState(false);
-  
+
 
 
   const [finish, finishstatus] = useState(false);
@@ -114,14 +115,13 @@ export default function TestPage() {
   const updateExitCount = async () => {
     if (!user) return;
     const newCount = exitCount + 1;
-    if(newCount <3)
-    {
+    if (newCount < 3) {
       toast.error(`Violations : ${newCount}/{3}`, {
         position: "top-right",
         autoClose: 3000,
       });
     }
-    else{
+    else {
 
       toast.error(`Blocked`, {
         position: "top-right",
@@ -129,7 +129,7 @@ export default function TestPage() {
       });
 
     }
-    
+
     setExitCount(newCount);
     await set(ref(database, `exams/${testid}/${user.uid}/exitCount`), newCount);
   };
@@ -154,7 +154,7 @@ export default function TestPage() {
     return (
       <div className="d-flex align-items-center justify-content-center vh-100 bg-light">
         <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
+          <LoadingScreen/>
         </div>
       </div>
     );
@@ -206,7 +206,19 @@ export default function TestPage() {
                   <li>Do not navigate away or refresh the page.</li>
                   <li>Ensure a stable internet connection.</li>
                   <li>Submit your answers before time runs out.</li>
-                </ul>
+                  <li>
+                    <span
+                      style={{
+                        color: exitCount === 0 ? 'green' :
+                          exitCount === 1 ? 'orange' :
+                            'red'
+                      }}
+                    >
+                      Violation count:
+
+                      {exitCount}/3
+                    </span>
+                  </li>                </ul>
               </div>
             </div>
             <button onClick={start_resume} className="btn btn-primary mt-3">
@@ -217,7 +229,7 @@ export default function TestPage() {
         )}
       </div>
       <ToastContainer />
-      
+
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title></Modal.Title>
@@ -228,7 +240,7 @@ export default function TestPage() {
             Cancel
           </Button>
           <Button variant="danger" onClick={enterFullscreen}>
-          {startedBefore ? "Resume Exam" : "Start Exam"}
+            {startedBefore ? "Resume Exam" : "Start Exam"}
           </Button>
         </Modal.Footer>
       </Modal>

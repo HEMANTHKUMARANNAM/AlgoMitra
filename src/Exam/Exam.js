@@ -5,6 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useParams } from "react-router-dom";
 import Problem from "./Problem";
 import { AuthContext } from "../utility/AuthContext";
+import LoadingScreen from "../LoadingScreen";
 
 const EXAM_DURATION = 1800; // 20 seconds for testing
 const Exam = () => {
@@ -87,7 +88,7 @@ const Exam = () => {
   return (
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
     {loading ? (
-      <p>Loading...</p>
+      <LoadingScreen/>
     ) : data && Object.keys(data).length > 0 ? (
       <Problem data={data} timeLeft={timeLeft} />
     ) : (
