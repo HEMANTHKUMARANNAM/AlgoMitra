@@ -11,8 +11,11 @@ import { Image } from "react-bootstrap";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Modal  , Button} from "react-bootstrap";
 
 const EXAM_DURATION = 1800; // 1 hour in seconds
+
+
 
 export default function TestPage() {
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -22,6 +25,9 @@ export default function TestPage() {
   const [startedBefore, setStartedBefore] = useState(false);
   const [examLoading, setExamLoading] = useState(true);
   const [userScore, setUserScore] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  
+
 
   const [finish, finishstatus] = useState(false);
 
@@ -133,9 +139,15 @@ export default function TestPage() {
 
 
   const enterFullscreen = () => {
+    setShowModal(false);
+
     document.documentElement.requestFullscreen().then(() => {
       setHasEnteredFullscreen(true);
     });
+  };
+
+  const start_resume = () => {
+    setShowModal(true);
   };
 
   if (examLoading || loading) {
@@ -197,7 +209,7 @@ export default function TestPage() {
                 </ul>
               </div>
             </div>
-            <button onClick={enterFullscreen} className="btn btn-primary mt-3">
+            <button onClick={start_resume} className="btn btn-primary mt-3">
               <FaExpandArrowsAlt className="me-2" /> {startedBefore ? "Resume Exam" : "Start Exam"}
             </button>
           </div>
@@ -205,6 +217,21 @@ export default function TestPage() {
         )}
       </div>
       <ToastContainer />
+      
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to  {startedBefore ? "Resume Exam" : "Start Exam"} the test?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={enterFullscreen}>
+          {startedBefore ? "Resume Exam" : "Start Exam"}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
