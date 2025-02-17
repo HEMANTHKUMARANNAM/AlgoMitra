@@ -20,6 +20,11 @@ import back_light from "../assets/back-white.png";
 import exam_black from "../assets/exam_dark.png";
 import exam_light from "../assets/exam_light.png";
 
+import admin_black from "../assets/admin_dark.png";
+import admin_light from "../assets/admin_light.png";
+
+
+
 
 const MainNavbar = ({ command, showDashboard }) => {
   const { theme, toggleTheme } = useTheme(); // Access theme and toggleTheme from ThemeContext
@@ -165,6 +170,19 @@ const MainNavbar = ({ command, showDashboard }) => {
     height={30}
     className="me-2"
     onClick={() => navigate("/tests")} // Corrected onClick
+    style={{ cursor: "pointer", marginRight: "30px" }}
+  />
+)}
+
+{user && user.email=== "99220041106@klu.ac.in" && (
+  <Image
+    src={theme === "light" ? admin_black : admin_light}
+    alt="Back"
+    roundedCircle
+    width={30}
+    height={30}
+    className="me-2"
+    onClick={() => navigate("/examsadmin")} // Corrected onClick
     style={{ cursor: "pointer", marginRight: "30px" }}
   />
 )}

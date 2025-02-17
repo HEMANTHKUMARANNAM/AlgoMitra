@@ -9,6 +9,8 @@ import Profile from './account/Profile';
 import Dashboard from './pages/Dashboard';
 import Tests from './pages/Tests';
 import TestPage from './pages/TestWindow';
+import ExamAdmin from './pages/ExamAdmin';
+import TestsAdmin from './pages/TestsAdmin';
 
 
 
@@ -22,6 +24,10 @@ function App() {
 
 
           <Route path="/tests" element={<ProtectedRoute> <Tests /></ProtectedRoute>} />
+
+          <Route path="/examadmin/:testid" element={<ProtectedRoute> <ExamAdmin /></ProtectedRoute>} />
+
+          <Route path="/examsadmin" element={<ProtectedRoute> <TestsAdmin /></ProtectedRoute>} />
 
           <Route path="/test/:testid" element={<ProtectedRoute><TestPage/></ProtectedRoute> } />
 

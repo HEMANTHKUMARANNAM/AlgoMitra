@@ -62,7 +62,7 @@ const Output = ({ editorRef, language, data }) => {
 
   const saveResult = async (database, user, allPassed) => {
     try {
-      const resultRef = ref(database, `exams/results/${user.uid}/${testid}//${data.questionname}`);
+      const resultRef = ref(database, `exams/results/${testid}/${user.uid}/${data.questionname}`);
       const snapshot = await get(resultRef);
 
       if (snapshot.exists() && snapshot.val() === true) {

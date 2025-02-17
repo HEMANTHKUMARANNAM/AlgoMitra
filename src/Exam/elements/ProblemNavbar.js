@@ -31,7 +31,7 @@ const ProblemNavbar = ({ setlan, lan, onNext, onPrev, timeLeft, data, toggleSide
   useEffect(() => {
     if (loading || !user?.uid || !testid || !data?.questionname) return;
 
-    const resultRef = ref(database, `exams/results/${user.uid}/${testid}/${data.questionname}`);
+    const resultRef = ref(database, `exams/results/${testid}/${user.uid}/${data.questionname}`);
     const listener = onValue(resultRef, (snapshot) => {
       if (snapshot.exists()) {
         const resultData = snapshot.val();
@@ -58,29 +58,28 @@ const ProblemNavbar = ({ setlan, lan, onNext, onPrev, timeLeft, data, toggleSide
     <Navbar bg={theme === "light" ? "light" : "dark"} variant={theme} expand="lg" sticky="top" className="shadow-sm">
       <Container fluid className="d-flex justify-content-between align-items-center">
         <div>
-          { !isSidebarExpanded ?
-          (
-          <Image
-            src={theme === 'light' ? menu_dark : menu_light}
-            alt="Toggle Sidebar"
-            width={30}
-            height={30}
-            className="me-2"
-            onClick={toggleSidebar}
-            style={{ cursor: "pointer" }}
-          />
-          ) : (<></>)
-}
+          {!isSidebarExpanded ?
+            (
+              <Image
+                src={theme === 'light' ? menu_dark : menu_light}
+                alt="Toggle Sidebar"
+                width={30}
+                height={30}
+                className="me-2"
+                onClick={toggleSidebar}
+                style={{ cursor: "pointer" }}
+              />
+            ) : (<></>)
+          }
         </div>
         <div className="d-flex align-items-center">
-        <p
-  className={`lead mb-0 font-mono ${
-    theme === "dark" ? "text-light" : "text-dark"
-  }`}
-  style={{ minWidth: "60px", textAlign: "center" , paddingRight:"20px" }}
->
-  Time Left: {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, "0")}
-</p>
+          <p
+            className={`lead mb-0 font-mono ${theme === "dark" ? "text-light" : "text-dark"
+              }`}
+            style={{ minWidth: "60px", textAlign: "center", paddingRight: "20px" }}
+          >
+            Time Left: {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, "0")}
+          </p>
 
           <Dropdown className="me-3">
             <Dropdown.Toggle variant={theme === "light" ? "outline-primary" : "outline-secondary"} id="dropdown-languages">
@@ -120,7 +119,7 @@ const ProblemNavbar = ({ setlan, lan, onNext, onPrev, timeLeft, data, toggleSide
           <Button variant="primary" className="me-3" onClick={onNext}>
             Next
           </Button> */}
-         
+
         </div>
       </Container>
     </Navbar>

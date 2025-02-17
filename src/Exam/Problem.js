@@ -65,7 +65,7 @@ function Problem({ data, timeLeft }) {
     questionsArray.forEach((question, index) => {
       console.log(question.toString());
       const questionName = question[1].questionname;
-      const resultRef = ref(database, `exams/results/${user.uid}/${testid}/${questionName}`);
+      const resultRef = ref(database, `exams/results/${testid}/${user.uid}/${questionName}`);
 
       listeners[questionName] = onValue(resultRef, (snapshot) => {
         setQuestionStatuses((prev) => ({
@@ -104,7 +104,7 @@ function Problem({ data, timeLeft }) {
     });
 
 
-    const finishRef = ref(database, `exams/results/${testid}/${user.uid}/finish`);
+    const finishRef = ref(database, `exams/${testid}/${user.uid}/finish`);
 
     // Store true in Firebase
     set(finishRef, true);

@@ -18,7 +18,7 @@ function CodeWindow({ data, lan }) {
   }));
 
 
- 
+
 
 
 
@@ -71,11 +71,11 @@ function CodeWindow({ data, lan }) {
         flexDirection: "column",
       }}>
         <div className="d-flex flex-column" style={{
-  width: "100%",
-  flex: 1, // Allow it to take the full remaining height
-  maxHeight: "100%", // Ensure it doesn’t exceed the available space
-  overflowY: "auto", // Enable scrolling when the content exceeds the max height
-}}>
+          width: "100%",
+          flex: 1, // Allow it to take the full remaining height
+          maxHeight: "100%", // Ensure it doesn’t exceed the available space
+          overflowY: "auto", // Enable scrolling when the content exceeds the max height
+        }}>
           <div style={{
             backgroundColor: theme === "dark" ? "#343a40" : "#f8f9fa",
             color: theme === "dark" ? "#f8f9fa" : "#343a40",
@@ -101,16 +101,16 @@ function CodeWindow({ data, lan }) {
             {mode === "solution" && !data.video && !data.solution && (
               <>
                 <Alert variant="info" className="my-4">
-            Solution will be available soon!
-          </Alert>
-          <div style={{ maxWidth: '100%', overflow: 'hidden', textAlign: 'center' }}>
-            <Image 
-              src={nosolution} 
-              alt="Coming soon" 
-              fluid 
-              style={{ maxWidth: '70%', height: 'auto' }} 
-            />
-          </div>
+                  Solution will be available soon!
+                </Alert>
+                <div style={{ maxWidth: '100%', overflow: 'hidden', textAlign: 'center' }}>
+                  <Image
+                    src={nosolution}
+                    alt="Coming soon"
+                    fluid
+                    style={{ maxWidth: '70%', height: 'auto' }}
+                  />
+                </div>
               </>
             )}
 
