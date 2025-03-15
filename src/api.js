@@ -21,3 +21,18 @@ export const executeCode = async (language, sourceCode, input) => {
   // console.log( typeof(response.data.run.output) );
   return response.data;
 };
+
+
+const SQLAPI = axios.create({
+  baseURL: "http://20.193.131.218:3000",
+});
+
+export const executeQuery = async (query) => {
+  try {
+    const response = await SQLAPI.post("/query", { query });
+    console.log(response);
+    return response.data.data;
+  } catch (err) {
+    throw new Error(err.response?.data?.details || "Error executing query");
+  }
+};

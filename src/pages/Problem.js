@@ -13,6 +13,11 @@ function Problem() {
   const navigate = useNavigate();
   const [mode, setMode] = useState("statement");
   const [questionData, setQuestionData] = useState(null);
+  const [mysql, setmysql] = useState(false);
+
+  
+
+
   const [lan, setLan] = useState( localStorage.getItem("lan") || "java" );  // Initialize lan as null first
 
   const decryptedCourse = decryptParam(course);
@@ -39,6 +44,11 @@ function Problem() {
           database,
           `algomitra/${decryptedCourse}`
         );
+
+        if( decryptedCourse === "007MySQL" )
+        {
+          setmysql(true);
+        }
 
         // Get both question data and all questions in parallel
         const [questionSnapshot, allQuestionsSnapshot] = await Promise.all([
@@ -110,13 +120,14 @@ function Problem() {
           lan={lan}
           nextQuestionUrl={questionData?.nextQuestionUrl} // Pass next question URL from the question data
           prevQuestionUrl={questionData?.prevQuestionUrl} // Pass next question URL from the question data
+          mysql = {mysql}
         />
       </div>
 
       {/* Content area */}
       <div className="flex-grow-1 d-flex flex-column overflow-hidden">
         {questionData ? (
-          <CodeWindow mode={mode} data={questionData} lan={lan} />
+          <CodeWindow mode={mode} data={questionData} lan={lan} mysql= {mysql} />
         ) : (
           <LoadingScreen/>
         )}

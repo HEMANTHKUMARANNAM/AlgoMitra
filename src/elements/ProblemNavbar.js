@@ -19,11 +19,11 @@ import back_black from '../assets/back-black.png';
 import back_light from '../assets/back-white.png';
 
 
-const ProblemNavbar = ({ toggleMode, activeMode, setlan, lan , nextQuestionUrl , prevQuestionUrl}) => {
+const ProblemNavbar = ({ toggleMode, activeMode, setlan, lan , nextQuestionUrl , prevQuestionUrl , mysql}) => {
   const { theme, toggleTheme } = useTheme(); // Access theme and toggle function
   const navigate = useNavigate(); // Hook for navigation
   const { course, questionId } = useParams();
-    const [photoURL, setPhotoURL] = useState(null);
+  const [photoURL, setPhotoURL] = useState(null);
     
   
 
@@ -34,6 +34,7 @@ const ProblemNavbar = ({ toggleMode, activeMode, setlan, lan , nextQuestionUrl ,
         if (user) {
           setPhotoURL(user.photoURL); // Update photoURL with user's profile picture
         }
+        setlan("mysql")
       });
     
 
@@ -196,7 +197,7 @@ const ProblemNavbar = ({ toggleMode, activeMode, setlan, lan , nextQuestionUrl ,
               {displayLan}
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              {Object.keys(CODE_SNIPPETS).map((language) => (
+              {Object.keys(mysql === false ? CODE_SNIPPETS : {"mysql" : "v1"}).map((language) => (
                 <Dropdown.Item key={language} onClick={() => handleLanguageChange(language)}>
                   {language.charAt(0).toUpperCase() + language.slice(1)}
                 </Dropdown.Item>

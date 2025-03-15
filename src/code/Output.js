@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Button, Spinner, Form, Row, Col } from "react-bootstrap";
-import { executeCode } from "../api";
+import { executeCode, executeQuery } from "../api";
 import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -10,7 +10,7 @@ import { ref, set, get } from "firebase/database";
 import { AuthContext } from "../utility/AuthContext";
 import { decryptParam } from "../cryptoUtils";
 
-const Output = ({ editorRef, language, data }) => {
+const Output = ({ editorRef, language, data  }) => {
   const [output, setOutput] = useState([]);
   const [isRunning, setIsRunning] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,9 +41,14 @@ const Output = ({ editorRef, language, data }) => {
     const sourceCode = editorRef.current?.getValue();
     if (!sourceCode) return;
 
+
+ 
+
     try {
       setIsRunning(true);
       setIsError(false);
+
+
       const { run: result } = await executeCode(language, sourceCode, input);
 
       const resultlist = result.output ? result.output.split("\n") : ["No output received."];

@@ -6,18 +6,27 @@ import { useTheme } from '../ThemeContext'; // Import Theme Context
 import { Image, Alert } from 'react-bootstrap';
 import ReactPlayer from "react-player";
 import nosolution from "../assets/9233845_4117020.svg";
+import DatabaseSchema from "../components/DatabaseSchema";
 
-function CodeWindow({ mode, data, lan }) {
+function CodeWindow({ mode, data, lan , mysql }) {
   const [leftColWidth, setLeftColWidth] = useState(50);
   const [dragging, setDragging] = useState(false);
   const [mouseStartX, setMouseStartX] = useState(0);
   const [initialWidth, setInitialWidth] = useState(0);
   const { theme } = useTheme(); // Access the theme from context
 
+  function gettestdata() {
+
+    
   const testdata = data.testcases.slice(0, 3).map((testcase) => ({
     input: testcase.input,
     output: testcase.expectedOutput,
   }));
+
+  return testdata;
+
+    
+  }
 
   const handleMouseDown = (e) => {
     if (e.button !== 0) return;
@@ -87,19 +96,19 @@ function CodeWindow({ mode, data, lan }) {
     },
     container: {
       padding: "20px",
-      backgroundColor: theme === "dark" ? "#343a40" : "#ffffff",
+      backgroundColor: theme === "dark" ? "#212529" : "#ffffff",
       borderRadius: "8px",
       margin: "20px 0",
     },
     heading: {
-      color: theme === "dark" ? "#f8f9fa" : "#343a40",
+      color: theme === "dark" ? "#f8f9fa" : "#212529",
       marginBottom: "15px",
       fontSize: "1.25rem",
     },
   };
 
   return (
-    <div style={{ backgroundColor: theme === "dark" ? "#343a40" : "#ffffff", display: "flex", height: "100vh", padding: 0 }}>
+    <div style={{ backgroundColor: theme === "dark" ? "#212529" : "#ffffff", display: "flex", height: "100%", padding: 0 }}>
       {/* Left Column */}
       <div style={{
         width: `${leftColWidth}%`,
@@ -108,14 +117,14 @@ function CodeWindow({ mode, data, lan }) {
         flexDirection: "column",
       }}>
         <div className="d-flex flex-column" style={{
-  width: "100%",
-  flex: 1, // Allow it to take the full remaining height
-  maxHeight: "100%", // Ensure it doesn’t exceed the available space
-  overflowY: "auto", // Enable scrolling when the content exceeds the max height
-}}>
+          width: "100%",
+          flex: 1, // Allow it to take the full remaining height
+          maxHeight: "100%", // Ensure it doesn’t exceed the available space
+          overflowY: "auto", // Enable scrolling when the content exceeds the max height
+        }}>
           <div style={{
-            backgroundColor: theme === "dark" ? "#343a40" : "#f8f9fa",
-            color: theme === "dark" ? "#f8f9fa" : "#343a40",
+            backgroundColor: theme === "dark" ? "#212529" : "#f8f9fa",
+            color: theme === "dark" ? "#f8f9fa" : "#212529",
             padding: "1rem",
           }}>
             {/* Video Solution */}
@@ -138,16 +147,16 @@ function CodeWindow({ mode, data, lan }) {
             {mode === "solution" && !data.video && !data.solution && (
               <>
                 <Alert variant="info" className="my-4">
-            Solution will be available soon!
-          </Alert>
-          <div style={{ maxWidth: '100%', overflow: 'hidden', textAlign: 'center' }}>
-            <Image 
-              src={nosolution} 
-              alt="Coming soon" 
-              fluid 
-              style={{ maxWidth: '70%', height: 'auto' }} 
-            />
-          </div>
+                  Solution will be available soon!
+                </Alert>
+                <div style={{ maxWidth: '100%', overflow: 'hidden', textAlign: 'center' }}>
+                  <Image
+                    src={nosolution}
+                    alt="Coming soon"
+                    fluid
+                    style={{ maxWidth: '70%', height: 'auto' }}
+                  />
+                </div>
               </>
             )}
 
@@ -155,7 +164,7 @@ function CodeWindow({ mode, data, lan }) {
             <div dangerouslySetInnerHTML={mode === "statement" ? getSanitizedHTML(data.question + "") : getSanitizedHTML(data.solution)} />
 
             {/* Sample Test Cases */}
-            {mode === "statement" && (
+            {mode === "statement" && !mysql && (
               <div style={tableStyles.container}>
                 <h3 style={tableStyles.heading}>Sample Test Cases:</h3>
                 <table style={tableStyles.table}>
@@ -166,7 +175,7 @@ function CodeWindow({ mode, data, lan }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {testdata.map((row, index) => (
+                    {gettestdata().map((row, index) => (
                       <tr key={index} style={tableStyles.tr}>
                         <td style={tableStyles.td}>
                           <div dangerouslySetInnerHTML={{ __html: row.input.replace(/\n/g, "<br>") }} />
@@ -180,6 +189,15 @@ function CodeWindow({ mode, data, lan }) {
                 </table>
               </div>
             )}
+
+            {mode === "statement" && mysql &&
+            (
+              <DatabaseSchema/>
+            )
+            }
+
+
+
           </div>
         </div>
       </div>
@@ -195,7 +213,7 @@ function CodeWindow({ mode, data, lan }) {
         display: "flex",
         flexDirection: "column",
       }}>
-        <CodeEditor lan={lan} data={data} />
+        <CodeEditor lan={lan} data={data} mysql = {mysql}  />
       </div>
     </div>
   );
