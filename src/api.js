@@ -1,5 +1,7 @@
 import axios from "axios";
 import { LANGUAGE_VERSIONS } from "./constants";
+import { database } from "./firebase";
+import { ref, get } from "firebase/database";
 
 const API = axios.create({
   baseURL: "https://emkc.org/api/v2/piston",
@@ -23,12 +25,38 @@ export const executeCode = async (language, sourceCode, input) => {
 };
 
 
-const SQLAPI = axios.create({
-  baseURL: "http://20.193.131.218:3000",
-});
+// const SQLAPI = axios.create({
+//   baseURL: await get(ref(database, `myserver`)).val(),
+// });
 
+// export const executeQuery = async (query) => {
+//   try {
+//     const response = await SQLAPI.post("/query", { query });
+//     console.log(response);
+//     return response.data.data;
+//   } catch (err) {
+//     throw new Error(err.response?.data?.details || "Error executing query");
+//   }
+// };
+
+
+// Refactor executeQuery to fetch the SQL API base URL asynchronously
 export const executeQuery = async (query) => {
   try {
+    // console.log((await get(ref(database, `myserver`))).val());
+
+    // Fetch the base URL from Firebase at runtime
+    // const sqlBaseURL = "https://skin-communities-duties-halo.trycloudflare.com/";
+    const sqlBaseURL = (await get(ref(database, `myserver`))).val();
+
+
+
+
+    // Initialize the SQL API with the base URL from Firebase
+    const SQLAPI = axios.create({
+      baseURL: sqlBaseURL,
+    });
+
     const response = await SQLAPI.post("/query", { query });
     console.log(response);
     return response.data.data;

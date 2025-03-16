@@ -77,20 +77,20 @@ const CodeEditor = ({ lan, data, mysql }) => {
       });
     });
 
-    // // Disable Paste (Ctrl + V)
-    // editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV, () => {
-    //   toast.error("Paste disabled!", {
-    //     position: "top-right",
-    //     autoClose: 3000,
-    //   });
-    // });
+    // Disable Paste (Ctrl + V)
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV, () => {
+      toast.error("Paste disabled!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    });
 
-    // editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Insert, () => {
-    //   toast.error("Shift insert disabled!😭", {
-    //     position: "top-right",
-    //     autoClose: 3000,
-    //   });
-    // });
+    editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Insert, () => {
+      toast.error("Shift insert disabled!😭", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    });
 
     // Register custom auto-suggestions for JavaScript
     monaco.languages.registerCompletionItemProvider("java", {

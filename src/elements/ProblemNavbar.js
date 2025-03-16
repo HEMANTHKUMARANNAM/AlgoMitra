@@ -34,7 +34,16 @@ const ProblemNavbar = ({ toggleMode, activeMode, setlan, lan , nextQuestionUrl ,
         if (user) {
           setPhotoURL(user.photoURL); // Update photoURL with user's profile picture
         }
-        setlan("mysql")
+
+        if(mysql)
+        {
+          setlan("mysql");
+        }
+        else
+        {
+          setlan(localStorage.getItem("lan")|| "java");
+        }
+
       });
     
 
