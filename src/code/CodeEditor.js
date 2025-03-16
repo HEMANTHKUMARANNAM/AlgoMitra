@@ -126,15 +126,15 @@ const CodeEditor = ({ lan, data, mysql }) => {
     };
 
     // 🚫 5. Detect & Block Developer Tools (Prevents bypassing restrictions)
-    const detectDevTools = () => {
-      if (window.outerWidth - window.innerWidth > 100 || window.outerHeight - window.innerHeight > 100) {
-        alert("Developer Tools Detected! Paste is blocked.");
-        window.location.reload();
-      }
-    };
+    // const detectDevTools = () => {
+    //   if (window.outerWidth - window.innerWidth > 100 || window.outerHeight - window.innerHeight > 100) {
+    //     alert("Developer Tools Detected! Paste is blocked.");
+    //     window.location.reload();
+    //   }
+    // };
 
     document.addEventListener("paste", blockPaste);
-    window.addEventListener("resize", detectDevTools);
+    // window.addEventListener("resize", detectDevTools);
 
     // 🚫 4. Override Clipboard API (Stops extensions)
     navigator.clipboard.writeText = () => {

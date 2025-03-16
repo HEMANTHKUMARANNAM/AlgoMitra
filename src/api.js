@@ -61,6 +61,6 @@ export const executeQuery = async (query) => {
     console.log(response);
     return response.data.data;
   } catch (err) {
-    throw new Error(err.response?.data?.details || "Error executing query");
+    return ( { "error" : err.response?.data?.details || "Error executing query" });
   }
 };

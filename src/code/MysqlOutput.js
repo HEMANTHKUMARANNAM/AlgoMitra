@@ -69,10 +69,6 @@ const MyOutput = ({ editorRef, language, data  }) => {
   const runCode = async () => {
     const sourceCode = editorRef.current?.getValue();
     if (!sourceCode) return;
-
-
- 
-
     try {
       setIsRunning(true);
       setIsError(false);
@@ -80,13 +76,23 @@ const MyOutput = ({ editorRef, language, data  }) => {
 
       const resultlist = await executeQuery(sourceCode);
 
+      if (resultlist && typeof resultlist === 'object' && 'error' in resultlist) {
+        setOutput(`Error: ${resultlist.error}`);
+        setIsError(true);
+        setResponse([]);
+        setIsCodeExecuted(true);
+        return;
+      }
+
       handleQueryResult(resultlist);
 
       setIsCodeExecuted(true);
     } catch (error) {
       console.error("Error executing code:", error);
+      setOutput(`Error executing code: ${error.message || error}`);
       setIsError(true);
       setIsCodeExecuted(true);
+      setResponse([]);
     } finally {
       setIsRunning(false);
     }
@@ -128,11 +134,19 @@ const MyOutput = ({ editorRef, language, data  }) => {
   
         const resultlist = await executeQuery(sourceCode);
 
-        const r = handleResult(resultlist)
+        if (resultlist && typeof resultlist === 'object' && 'error' in resultlist) {
+          setOutput(`Error: ${resultlist.error}`);
+          setIsError(true);
+          setResponse([]);
+          setIsCodeExecuted(true);
+          return;
+        }
+
+        const r = handleResult(resultlist);
 
         const d = handleResult(data.testcases);
 
-        if(r.length != d.length)
+        if(r.length !== d.length)
         {
           console.log(false);
           allPassed = false;
@@ -140,29 +154,27 @@ const MyOutput = ({ editorRef, language, data  }) => {
         }
         else
         {
-
           let test = true;
-          for(let i ; i< r.length ; i++)
+          for(let i = 0; i < r.length; i++)
           {
-            test = test && verifyResults(r[i] , d[i])
+            test = test && verifyResults(r[i], d[i]);
           }
 
           allPassed = test;
 
-
-        console.log(allPassed);
-
-        console.log(resultlist);
-
-        setIsCodeExecuted(true);
-
+          console.log(allPassed);
+          console.log(resultlist);
+          setIsCodeExecuted(true);
         }
   
         
       } catch (error) {
         console.error("Error executing code:", error);
+        setOutput(`Error executing code: ${error.message || error}`);
         setIsError(true);
+        setResponse([]);
         setIsCodeExecuted(true);
+        return;
       } finally {
         setIsRunning(false);
       }
@@ -180,7 +192,9 @@ const MyOutput = ({ editorRef, language, data  }) => {
       setIsCodeExecuted(true);
     } catch (error) {
       console.error("Error submitting code:", error);
+      setOutput(`Error submitting code: ${error.message || error}`);
       setIsError(true);
+      setResponse([]);
       setIsCodeExecuted(true);
       toast.error("Error executing code: " + (error.message || "Unknown error"));
     } finally {
@@ -189,12 +203,13 @@ const MyOutput = ({ editorRef, language, data  }) => {
   };
   
   const verifyResults = (results, expectedOutput) => {
+
+    console.log(results + " " + expectedOutput + " " + true);
+
     if (!Array.isArray(results) || !Array.isArray(expectedOutput)) {
       return false;
     }
 
-    console.log(expectedOutput);
-    
     // For simple array of objects comparison
     if (Array.isArray(results) && !Array.isArray(results[0])) {
       // Check if arrays have the same length
@@ -215,10 +230,11 @@ const MyOutput = ({ editorRef, language, data  }) => {
         
         // Compare values for each key
         for (const key of resultKeys) {
-          if( resultObj[key] === null &&  expectedObj[key] === "null")continue;
+          if( resultObj[key] === null &&  expectedObj[key] === "null") continue;
           if (resultObj[key] !== expectedObj[key]) return false;
         }
       }
+
       return true;
     }
     
@@ -253,7 +269,7 @@ const MyOutput = ({ editorRef, language, data  }) => {
     return false;
   };
 
-
+  // it will send as array
   function handleResult(result) {
     const allResults = [];
 
@@ -267,7 +283,7 @@ const MyOutput = ({ editorRef, language, data  }) => {
     if (Array.isArray(result)) {
         result.forEach((item, index) => {
             if (Array.isArray(item)) {
-                allResults.push(item );
+                allResults.push(item);
             } else if (item && typeof item === 'object' && 'affectedRows' in item) {
                 // allResults.push({ type: 'header', data: item });
             } else {
@@ -382,7 +398,9 @@ const MyOutput = ({ editorRef, language, data  }) => {
               }}
             >
               <p>Output :</p>
-              {response.length >0 ? (
+              {isError ? (
+                <pre style={{color: "red"}}>{output}</pre>
+              ) : response.length > 0 ? (
                 response.map((result, resultIndex) => (
                   <div key={resultIndex} className="overflow-auto border rounded mt-4">
                       {result.type === 'data' && (
@@ -416,7 +434,7 @@ const MyOutput = ({ editorRef, language, data  }) => {
                           </p>
                       )}
                   </div>
-              ))
+                ))
               ) : (
                 <pre>No output received.</pre>
               )}

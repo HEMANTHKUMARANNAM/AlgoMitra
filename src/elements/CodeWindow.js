@@ -192,7 +192,7 @@ function CodeWindow({ mode, data, lan , mysql }) {
 
             {mode === "statement" && mysql &&
             (
-              <DatabaseSchema/>
+              <DatabaseSchema testcases = {data.testcases} />
             )
             }
 
