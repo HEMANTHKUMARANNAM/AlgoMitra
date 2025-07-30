@@ -19,7 +19,7 @@ A modern and responsive web application built using **React**. This project demo
 
 - ⚛️ React
 - 🧱 HTML5 + CSS3
-- 🌀 Tailwind CSS
+- 🌀 Bootstrap
 
 
 ## ✅ Features
